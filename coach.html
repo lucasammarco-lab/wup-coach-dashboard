@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>WUP — I tuoi appuntamenti</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --orange:#E57711;--orange-dark:#c96510;--green:#31B15C;
+  --gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-300:#d1d5db;
+  --gray-400:#9ca3af;--gray-500:#6b7280;--gray-600:#4b5563;--gray-700:#374151;
+  --gray-800:#1f2937;--gray-900:#111827;
+  --radius-sm:8px;--radius:12px;--radius-lg:16px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.08);
+  --shadow:0 4px 16px rgba(0,0,0,.10);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.14);
+}
+body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-800);min-height:100vh}
+
+/* Header */
+.header{background:linear-gradient(135deg,var(--orange) 0%,var(--orange-dark) 100%);padding:16px 20px;position:sticky;top:0;z-index:100;box-shadow:var(--shadow)}
+.header-inner{max-width:700px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.logo{color:#fff;font-size:24px;font-weight:800;letter-spacing:2px}
+.logo-sub{color:rgba(255,255,255,.8);font-size:11px;letter-spacing:.5px;text-transform:uppercase}
+.header-coach{color:#fff;font-size:14px;font-weight:600;margin-left:auto;text-align:right}
+.header-coach small{display:block;color:rgba(255,255,255,.7);font-size:11px;font-weight:400}
+
+/* Filter bar */
+.filter-bar{background:#fff;border-bottom:1px solid var(--gray-200);padding:12px 20px;position:sticky;top:64px;z-index:90;box-shadow:var(--shadow-sm)}
+.filter-inner{max-width:700px;margin:0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.day-btn{padding:8px 16px;border:2px solid var(--gray-300);border-radius:var(--radius-sm);background:#fff;color:var(--gray-600);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit}
+.day-btn:hover{border-color:var(--orange);color:var(--orange)}
+.day-btn.active{background:var(--orange);border-color:var(--orange);color:#fff}
+
+/* Counter */
+.counter-strip{max-width:700px;margin:16px auto 0;padding:0 20px}
+.counter-card{background:#fff;border-radius:var(--radius);padding:14px 20px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:12px}
+.counter-num{font-size:32px;font-weight:800;color:var(--orange)}
+.counter-label{font-size:14px;color:var(--gray-500);font-weight:500}
+
+/* Content */
+.content{max-width:700px;margin:16px auto 32px;padding:0 20px}
+
+/* Booking card */
+.booking-card{background:#fff;border-radius:var(--radius-lg);padding:16px;box-shadow:var(--shadow-sm);margin-bottom:10px;border:1px solid var(--gray-200);transition:box-shadow .15s}
+.booking-card:hover{box-shadow:var(--shadow)}
+.card-top{display:flex;align-items:flex-start;gap:12px}
+.time-badge{background:var(--gray-900);color:#fff;border-radius:var(--radius-sm);padding:8px 12px;font-size:15px;font-weight:700;white-space:nowrap;line-height:1.3;text-align:center;min-width:72px}
+.time-badge small{display:block;font-size:10px;font-weight:400;opacity:.7;margin-top:1px}
+.card-body{flex:1;min-width:0}
+.client-name{font-size:16px;font-weight:700;color:var(--gray-900);margin-bottom:4px}
+.client-phone{font-size:14px;color:var(--orange);font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.client-phone:hover{text-decoration:underline}
+.phone-icon{font-size:12px}
+.notes-text{font-size:12px;color:var(--gray-500);background:var(--gray-50);padding:6px 10px;border-radius:var(--radius-sm);margin-top:8px;border-left:3px solid var(--orange)}
+.no-phone{font-size:13px;color:var(--gray-400)}
+
+/* Empty state */
+.empty{text-align:center;padding:48px 20px;color:var(--gray-400)}
+.empty-icon{font-size:40px;margin-bottom:12px}
+.empty-text{font-size:15px;font-weight:500}
+
+/* Loading */
+.loading{text-align:center;padding:48px 20px}
+.spinner{width:36px;height:36px;border:3px solid var(--gray-200);border-top-color:var(--orange);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Alert */
+.alert{padding:14px 16px;border-radius:var(--radius);margin-bottom:16px;font-size:14px;font-weight:500}
+.alert.error{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+
+/* Error screen */
+.error-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.error-card{background:#fff;border-radius:var(--radius-lg);padding:40px 32px;text-align:center;max-width:380px;box-shadow:var(--shadow-lg)}
+.error-card h2{color:#e53e3e;margin:12px 0 8px;font-size:20px}
+.error-card p{color:var(--gray-500);font-size:14px}
+
+/* Date separator */
+.date-sep{font-size:12px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;padding:12px 0 8px;border-bottom:1px solid var(--gray-200);margin-bottom:8px}
+
+@media(max-width:600px){
+  .filter-inner{gap:8px}
+}
+</style>
+</head>
+<body>
+
+<div id="error-screen" class="error-screen" style="display:none">
+  <div class="error-card">
+    <div style="font-size:48px">🔒</div>
+    <h2>Accesso negato</h2>
+    <p>Link non valido o scaduto. Contatta l'organizzazione WUP.</p>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+
+  <header class="header">
+    <div class="header-inner">
+      <div>
+        <div class="logo">WUP</div>
+        <div class="logo-sub">Coach Booking Platform</div>
+      </div>
+      <div class="header-coach">
+        <span id="coach-name-header">…</span>
+        <small id="coach-role-header"></small>
+      </div>
+    </div>
+  </header>
+
+  <div class="filter-bar">
+    <div class="filter-inner">
+      <button class="day-btn active" data-date="all" onclick="setDayFilter(this,'all')">Tutti i giorni</button>
+      <button class="day-btn" data-date="2026-03-13" onclick="setDayFilter(this,'2026-03-13')">Ven 13 Mar</button>
+      <button class="day-btn" data-date="2026-03-14" onclick="setDayFilter(this,'2026-03-14')">Sab 14 Mar</button>
+      <button class="day-btn" data-date="2026-03-15" onclick="setDayFilter(this,'2026-03-15')">Dom 15 Mar</button>
+    </div>
+  </div>
+
+  <div class="counter-strip">
+    <div class="counter-card">
+      <div class="counter-num" id="counter-num">—</div>
+      <div class="counter-label" id="counter-label">appuntamenti confermati</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div id="alert-area"></div>
+    <div id="bookings-list"></div>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  const API_URL = 'https://script.google.com/macros/s/AKfycbyRPpzCcN0h2kMyg6xKVMJroRZwQqYyxXtGmuaqtHh8BCVVQbHvT6DKjzJs0HrqFtyv/exec';
+
+  let coachId = '';
+  let coachToken = '';
+  let allBookings = [];
+  let currentDay = 'all';
+
+  // ── Init ──────────────────────────────────────────────────────────────────
+  function init() {
+    const params = new URLSearchParams(window.location.search);
+    coachId    = params.get('id')    || sessionStorage.getItem('wup_coach_id')    || '';
+    coachToken = params.get('token') || sessionStorage.getItem('wup_coach_token') || '';
+
+    if (!coachId || !coachToken) { showErrorScreen(); return; }
+    sessionStorage.setItem('wup_coach_id',    coachId);
+    sessionStorage.setItem('wup_coach_token', coachToken);
+
+    document.getElementById('app').style.display = 'block';
+    loadBookings();
+  }
+
+  function showErrorScreen() {
+    document.getElementById('error-screen').style.display = 'flex';
+  }
+
+  // ── API ───────────────────────────────────────────────────────────────────
+  async function loadBookings() {
+    showLoading();
+    try {
+      const url = API_URL + '?action=getCoachBookings&coach_id=' + encodeURIComponent(coachId) + '&coach_token=' + encodeURIComponent(coachToken);
+      const res = await fetch(url);
+      const json = await res.json();
+
+      if (!json.success) {
+        if (json.code === 'UNAUTHORIZED') { showErrorScreen(); return; }
+        showAlert('Errore: ' + json.error, 'error');
+        hideLoading();
+        return;
+      }
+
+      allBookings = json.data.bookings || [];
+      const coach = json.data.coach || {};
+      document.getElementById('coach-name-header').textContent = (coach.nome || '') + ' ' + (coach.cognome || '');
+      document.getElementById('coach-role-header').textContent = coach.ruolo || '';
+      document.title = 'WUP — ' + ((coach.nome || '') + ' ' + (coach.cognome || '')).trim();
+
+      renderBookings();
+    } catch(e) {
+      showAlert('Errore di rete. Ricarica la pagina.', 'error');
+      hideLoading();
+    }
+  }
+
+  // ── Filters ────────────────────────────────────────────────────────────────
+  window.setDayFilter = function(btn, date) {
+    document.querySelectorAll('.day-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    currentDay = date;
+    renderBookings();
+  };
+
+  function getFiltered() {
+    if (currentDay === 'all') return allBookings;
+    return allBookings.filter(function(b) {
+      return String(b.start_datetime || '').startsWith(currentDay);
+    });
+  }
+
+  // ── Render ──────────────────────────────────────────────────────────────────
+  function renderBookings() {
+    const list = getFiltered();
+    const container  = document.getElementById('bookings-list');
+    const counterNum = document.getElementById('counter-num');
+    const counterLbl = document.getElementById('counter-label');
+
+    counterNum.textContent = list.length;
+    counterLbl.textContent = list.length === 1 ? 'appuntamento confermato' : 'appuntamenti confermati';
+
+    if (!list.length) {
+      container.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">Nessun appuntamento per il giorno selezionato</div></div>';
+      return;
+    }
+    container.innerHTML = list.map(renderCard).join('');
+  }
+
+  function renderCard(b) {
+    const start  = new Date(b.start_datetime);
+    const end    = new Date(b.end_datetime);
+    const ora    = pad(start.getHours()) + ':' + pad(start.getMinutes());
+    const oraF   = pad(end.getHours())   + ':' + pad(end.getMinutes());
+    const dateStr = start.toLocaleDateString('it-IT', { weekday:'short', day:'2-digit', month:'short' });
+
+    const phone = b.client_phone
+      ? '<a class="client-phone" href="tel:' + escHtml(b.client_phone) + '"><span class="phone-icon">📞</span>' + escHtml(b.client_phone) + '</a>'
+      : '<span class="no-phone">Nessun telefono</span>';
+    const notes = b.notes ? '<div class="notes-text">📝 ' + escHtml(b.notes) + '</div>' : '';
+
+    return '<div class="booking-card">' +
+      '<div class="card-top">' +
+      '<div class="time-badge">' + ora + '<small>' + oraF + '</small><small style="margin-top:3px;font-size:9px">' + dateStr + '</small></div>' +
+      '<div class="card-body">' +
+      '<div class="client-name">' + escHtml(b.client_name + ' ' + b.client_surname) + '</div>' +
+      '<div style="margin-top:4px">' + phone + '</div>' +
+      notes +
+      '</div>' +
+      '</div>' +
+      '</div>';
+  }
+
+  // ── UI helpers ─────────────────────────────────────────────────────────────
+  function showLoading() {
+    document.getElementById('bookings-list').innerHTML = '<div class="loading"><div class="spinner"></div><div style="color:var(--gray-400);font-size:14px">Caricamento…</div></div>';
+  }
+  function hideLoading() {
+    document.getElementById('bookings-list').innerHTML = '';
+  }
+  function showAlert(msg, type) {
+    const el = document.getElementById('alert-area');
+    el.innerHTML = '<div class="alert ' + type + '">' + escHtml(msg) + '</div>';
+  }
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function pad(n) { return String(n).padStart(2,'0'); }
+
+  init();
+})();
+</script>
+</body>
+</html>
