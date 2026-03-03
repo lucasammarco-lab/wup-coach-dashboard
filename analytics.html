@@ -221,6 +221,21 @@ tbody td{padding:12px 16px;font-size:13px;color:var(--gray-700)}
         </div>
       </div>
 
+      <!-- Conversioni -->
+      <div class="charts-row charts-row-2" id="conversion-section">
+        <div class="chart-card">
+          <div class="chart-title">Esiti commerciali</div>
+          <div class="chart-sub">Quante sessioni hanno portato a una vendita</div>
+          <div id="conversion-kpis" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px"></div>
+          <div class="chart-wrap" style="max-height:200px;display:flex;align-items:center;justify-content:center"><canvas id="chart-conversion"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Conversion rate per coach</div>
+          <div class="chart-sub">% venduto su sessioni con esito definito</div>
+          <div class="chart-wrap"><canvas id="chart-conversion-coach" height="200"></canvas></div>
+        </div>
+      </div>
+
       <!-- Tabella coach -->
       <div class="table-card">
         <div class="table-header">
@@ -346,6 +361,7 @@ tbody td{padding:12px 16px;font-size:13px;color:var(--gray-700)}
     renderCategoryChart(confirmed);
     renderHourChart(confirmed);
     renderDayChart();
+    renderConversions(confirmed);
     buildTableData(confirmed, cancelled);
     renderTable();
   }
@@ -615,6 +631,86 @@ tbody td{padding:12px 16px;font-size:13px;color:var(--gray-700)}
         '<td class="num-cell ' + cancelColor + '">' + r.cancelRate + '%</td>' +
         '</tr>';
     }).join('');
+  }
+
+  // ── Conversioni ───────────────────────────────────────────────────────────
+  function renderConversions(confirmed) {
+    const v  = confirmed.filter(function(b){ return b.esito === 'VENDUTO'; }).length;
+    const nv = confirmed.filter(function(b){ return b.esito === 'NON_VENDUTO'; }).length;
+    const it = confirmed.filter(function(b){ return b.esito === 'IN_TRATTATIVA'; }).length;
+    const dd = confirmed.filter(function(b){ return !b.esito; }).length;
+    const defined = v + nv + it;
+    const rate = defined > 0 ? Math.round(v / defined * 100) : 0;
+
+    document.getElementById('conversion-kpis').innerHTML =
+      kpiMini('✅ Venduto', v, '#065f46', '#d1fae5') +
+      kpiMini('❌ Non venduto', nv, '#991b1b', '#fee2e2') +
+      kpiMini('🔄 Trattativa', it, '#92400e', '#fef3c7') +
+      kpiMini('📋 Da definire', dd, '#4b5563', '#f3f4f6');
+
+    // Doughnut esiti
+    destroyChart('chart-conversion');
+    if (defined > 0 || dd > 0) {
+      charts['chart-conversion'] = new Chart(document.getElementById('chart-conversion'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Venduto','Non venduto','In trattativa','Da definire'],
+          datasets: [{ data: [v, nv, it, dd],
+            backgroundColor: ['#31B15Ccc','#e53e3ecc','#f59e0bcc','#9ca3afcc'],
+            borderColor:     ['#31B15C','#e53e3e','#f59e0b','#9ca3af'],
+            borderWidth: 2, hoverOffset: 6 }]
+        },
+        options: { responsive:true, cutout:'65%',
+          plugins:{ legend:{ position:'bottom', labels:{ font:{family:'Inter',size:11}, padding:10 } },
+            title:{ display: defined>0, text: 'Conversion rate: ' + rate + '%', font:{family:'Inter',size:13,weight:'700'}, color:'#111' }
+          }
+        }
+      });
+    }
+
+    // Bar coach conversion rate
+    const coachData = {};
+    confirmed.forEach(function(b){
+      if (!coachData[b.coach_name]) coachData[b.coach_name] = {v:0, nv:0, it:0};
+      if (b.esito === 'VENDUTO')       coachData[b.coach_name].v++;
+      if (b.esito === 'NON_VENDUTO')   coachData[b.coach_name].nv++;
+      if (b.esito === 'IN_TRATTATIVA') coachData[b.coach_name].it++;
+    });
+    const coachRates = Object.entries(coachData)
+      .map(function(e){ const tot = e[1].v+e[1].nv+e[1].it; return { name:e[0].split(' ').pop(), rate: tot>0?Math.round(e[1].v/tot*100):null }; })
+      .filter(function(e){ return e.rate !== null; })
+      .sort(function(a,b){ return b.rate - a.rate; });
+
+    destroyChart('chart-conversion-coach');
+    if (coachRates.length > 0) {
+      charts['chart-conversion-coach'] = new Chart(document.getElementById('chart-conversion-coach'), {
+        type: 'bar',
+        data: {
+          labels: coachRates.map(function(e){ return e.name; }),
+          datasets: [{ label: '% Venduto', data: coachRates.map(function(e){ return e.rate; }),
+            backgroundColor: coachRates.map(function(e){ return e.rate>=50?'#31B15Ccc':'#f59e0bcc'; }),
+            borderColor:     coachRates.map(function(e){ return e.rate>=50?'#31B15C':'#f59e0b'; }),
+            borderWidth:2, borderRadius:4 }]
+        },
+        options: { responsive:true, indexAxis:'y',
+          plugins:{ legend:{display:false} },
+          scales: {
+            x:{ beginAtZero:true, max:100, ticks:{ callback:function(v){return v+'%'}, font:{family:'Inter',size:11} }, grid:{color:'#f3f4f6'} },
+            y:{ ticks:{ font:{family:'Inter',size:11} }, grid:{display:false} }
+          }
+        }
+      });
+    } else {
+      document.getElementById('chart-conversion-coach').parentElement.innerHTML =
+        '<div style="text-align:center;color:var(--gray-400);font-size:13px;padding:40px">Nessun esito registrato ancora.<br>Marcali dalla Dashboard Admin.</div>';
+    }
+  }
+
+  function kpiMini(label, val, color, bg) {
+    return '<div style="background:' + bg + ';border-radius:10px;padding:10px 12px;text-align:center">' +
+      '<div style="font-size:22px;font-weight:800;color:' + color + '">' + val + '</div>' +
+      '<div style="font-size:10px;color:' + color + ';font-weight:600;margin-top:2px">' + label + '</div>' +
+      '</div>';
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────

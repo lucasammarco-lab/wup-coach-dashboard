@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>WUP — Link Operativi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --orange:#E57711;--orange-dark:#c96510;--orange-light:#fdf1e4;
+  --green:#31B15C;--blue:#3b82f6;--purple:#8b5cf6;--pink:#ec4899;--teal:#06b6d4;
+  --gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-300:#d1d5db;
+  --gray-400:#9ca3af;--gray-500:#6b7280;--gray-600:#4b5563;--gray-700:#374151;
+  --gray-800:#1f2937;--gray-900:#111827;
+  --radius-sm:8px;--radius:12px;--radius-lg:16px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.08);--shadow:0 4px 16px rgba(0,0,0,.10);--shadow-lg:0 8px 32px rgba(0,0,0,.14);
+}
+body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-800);min-height:100vh}
+
+.header{background:linear-gradient(135deg,var(--gray-900) 0%,#1f2937 100%);padding:16px 20px;box-shadow:var(--shadow)}
+.header-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.logo{color:#fff;font-size:24px;font-weight:800;letter-spacing:2px}
+.logo-sub{color:rgba(255,255,255,.6);font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.print-btn{padding:8px 14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:var(--radius-sm);color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
+.print-btn:hover{background:rgba(255,255,255,.2)}
+
+.content{max-width:900px;margin:0 auto;padding:24px 20px 48px}
+
+/* Section */
+.section{margin-bottom:28px}
+.section-title{font-size:13px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--gray-200)}
+
+/* Link cards */
+.link-card{background:#fff;border-radius:var(--radius-lg);border:1px solid var(--gray-200);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:10px;transition:box-shadow .15s}
+.link-card:hover{box-shadow:var(--shadow)}
+.link-card-inner{padding:14px 16px;display:flex;align-items:center;gap:12px}
+.link-icon{width:40px;height:40px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
+.link-icon.orange{background:var(--orange-light);color:var(--orange)}
+.link-icon.green{background:#d1fae5;color:var(--green)}
+.link-icon.blue{background:#dbeafe;color:var(--blue)}
+.link-icon.purple{background:#ede9fe;color:var(--purple)}
+.link-icon.gray{background:var(--gray-100);color:var(--gray-500)}
+.link-body{flex:1;min-width:0}
+.link-name{font-size:14px;font-weight:700;color:var(--gray-900);margin-bottom:2px}
+.link-desc{font-size:12px;color:var(--gray-500)}
+.link-url{font-size:11px;color:var(--gray-400);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:400px;margin-top:2px}
+.link-actions{display:flex;gap:6px;flex-shrink:0}
+.btn-copy{padding:6px 12px;background:var(--gray-100);border:1px solid var(--gray-200);border-radius:var(--radius-sm);font-size:12px;font-weight:600;color:var(--gray-600);cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
+.btn-copy:hover{background:var(--gray-200);color:var(--gray-800)}
+.btn-copy.copied{background:var(--green);border-color:var(--green);color:#fff}
+.btn-open{padding:6px 12px;background:var(--orange);border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;color:#fff;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:4px;transition:background .15s;white-space:nowrap}
+.btn-open:hover{background:var(--orange-dark)}
+
+/* Coach grid */
+.coach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.coach-card{background:#fff;border-radius:var(--radius);border:1px solid var(--gray-200);box-shadow:var(--shadow-sm);padding:14px;transition:box-shadow .15s}
+.coach-card:hover{box-shadow:var(--shadow)}
+.coach-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.coach-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0}
+.coach-info{flex:1;min-width:0}
+.coach-name{font-size:14px;font-weight:700;color:var(--gray-900)}
+.coach-meta{font-size:11px;color:var(--gray-400);margin-top:1px}
+.cat-tag{display:inline-block;padding:1px 7px;border-radius:20px;font-size:10px;font-weight:700;margin-top:2px}
+.cat-trading{background:#dbeafe;color:#1e40af}
+.cat-immobiliare{background:#d1fae5;color:#065f46}
+.cat-business{background:#ede9fe;color:#5b21b6}
+.cat-mindset{background:#fce7f3;color:#9d174d}
+.coach-actions{display:flex;gap:6px}
+.coach-actions .btn-copy,.coach-actions .btn-open{flex:1;text-align:center;justify-content:center}
+.no-token{font-size:12px;color:var(--gray-400);font-style:italic;padding:4px 0}
+
+/* Loading */
+.loading{text-align:center;padding:60px 20px}
+.spinner{width:36px;height:36px;border:3px solid var(--gray-200);border-top-color:var(--orange);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Error screen */
+.error-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.error-card{background:#fff;border-radius:var(--radius-lg);padding:40px 32px;text-align:center;max-width:380px;box-shadow:var(--shadow-lg)}
+.error-card h2{color:#e53e3e;margin:12px 0 8px}
+
+.avatar-colors{display:none}
+
+/* Print */
+@media print{
+  .header{background:#111 !important;-webkit-print-color-adjust:exact}
+  .btn-copy,.btn-open,.print-btn{display:none!important}
+  .link-url{display:block!important;max-width:100%!important;white-space:normal!important;word-break:break-all}
+  .coach-card{break-inside:avoid}
+}
+
+@media(max-width:600px){
+  .coach-grid{grid-template-columns:1fr}
+  .link-url{display:none}
+}
+</style>
+</head>
+<body>
+
+<div id="error-screen" class="error-screen" style="display:none">
+  <div class="error-card">
+    <div style="font-size:48px">🔒</div>
+    <h2>Accesso negato</h2>
+    <p style="color:var(--gray-500);font-size:14px">Token non valido.</p>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+  <header class="header">
+    <div class="header-inner">
+      <div>
+        <div class="logo">WUP</div>
+        <div class="logo-sub">Coach Booking — Link Operativi</div>
+      </div>
+      <div class="header-right">
+        <button class="print-btn" onclick="window.print()">🖨 Stampa / PDF</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <div id="loading" class="loading">
+      <div class="spinner"></div>
+      <div style="color:var(--gray-400);font-size:14px">Caricamento…</div>
+    </div>
+
+    <div id="main" style="display:none">
+
+      <!-- ADMIN -->
+      <div class="section">
+        <div class="section-title">Accesso admin</div>
+        <div class="link-card">
+          <div class="link-card-inner">
+            <div class="link-icon orange">🛡️</div>
+            <div class="link-body">
+              <div class="link-name">Dashboard Admin — Alessia</div>
+              <div class="link-desc">Tutte le prenotazioni, filtri, cancellazione</div>
+              <div class="link-url" id="admin-url-text"></div>
+            </div>
+            <div class="link-actions">
+              <button class="btn-copy" onclick="copyLink('admin-url')">Copia</button>
+              <a class="btn-open" id="admin-url" href="#" target="_blank">↗ Apri</a>
+            </div>
+          </div>
+        </div>
+        <div class="link-card">
+          <div class="link-card-inner">
+            <div class="link-icon purple">📊</div>
+            <div class="link-body">
+              <div class="link-name">Dashboard Analitica</div>
+              <div class="link-desc">Statistiche, grafici, conversioni</div>
+              <div class="link-url" id="analytics-url-text"></div>
+            </div>
+            <div class="link-actions">
+              <button class="btn-copy" onclick="copyLink('analytics-url')">Copia</button>
+              <a class="btn-open" id="analytics-url" href="#" target="_blank">↗ Apri</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PUBBLICI -->
+      <div class="section">
+        <div class="section-title">Link pubblici</div>
+        <div class="link-card">
+          <div class="link-card-inner">
+            <div class="link-icon green">📅</div>
+            <div class="link-body">
+              <div class="link-name">Pagina prenotazione clienti</div>
+              <div class="link-desc">Il link da dare ai clienti per prenotare</div>
+              <div class="link-url">https://lp.alfiobardolla.com/prenotazione-wup/</div>
+            </div>
+            <div class="link-actions">
+              <button class="btn-copy" onclick="copyText('https://lp.alfiobardolla.com/prenotazione-wup/')">Copia</button>
+              <a class="btn-open" href="https://lp.alfiobardolla.com/prenotazione-wup/" target="_blank">↗ Apri</a>
+            </div>
+          </div>
+        </div>
+        <div class="link-card">
+          <div class="link-card-inner">
+            <div class="link-icon blue">📖</div>
+            <div class="link-body">
+              <div class="link-name">Guida Clienti</div>
+              <div class="link-desc">Come prenotare una sessione</div>
+              <div class="link-url">https://lucasammarco-lab.github.io/wup-coach-booking/guida-clienti.html</div>
+            </div>
+            <div class="link-actions">
+              <button class="btn-copy" onclick="copyText('https://lucasammarco-lab.github.io/wup-coach-booking/guida-clienti.html')">Copia</button>
+              <a class="btn-open" href="https://lucasammarco-lab.github.io/wup-coach-booking/guida-clienti.html" target="_blank">↗ Apri</a>
+            </div>
+          </div>
+        </div>
+        <div class="link-card">
+          <div class="link-card-inner">
+            <div class="link-icon gray">📋</div>
+            <div class="link-body">
+              <div class="link-name">Guida Venditori / Consulenti</div>
+              <div class="link-desc">Istruzioni per chi gestisce le vendite</div>
+              <div class="link-url">https://lucasammarco-lab.github.io/wup-coach-booking/guida-venditori.html</div>
+            </div>
+            <div class="link-actions">
+              <button class="btn-copy" onclick="copyText('https://lucasammarco-lab.github.io/wup-coach-booking/guida-venditori.html')">Copia</button>
+              <a class="btn-open" href="https://lucasammarco-lab.github.io/wup-coach-booking/guida-venditori.html" target="_blank">↗ Apri</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COACH -->
+      <div class="section">
+        <div class="section-title">Dashboard personali coach (<span id="coach-count">…</span>)</div>
+        <div class="coach-grid" id="coach-grid"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const API_URL = 'https://script.google.com/macros/s/AKfycbyRPpzCcN0h2kMyg6xKVMJroRZwQqYyxXtGmuaqtHh8BCVVQbHvT6DKjzJs0HrqFtyv/exec';
+  const BASE_DASH = 'https://lucasammarco-lab.github.io/wup-coach-dashboard/';
+  const COACH_CATEGORY = {
+    'coach_001':'Trading','coach_002':'Immobiliare','coach_003':'Trading',
+    'coach_004':'Trading','coach_005':'Trading','coach_006':'Immobiliare',
+    'coach_007':'Trading','coach_009':'Business','coach_010':'Business',
+    'coach_011':'Trading','coach_013':'Trading','coach_014':'Trading',
+    'coach_015':'Mindset','coach_017':'Immobiliare','coach_018':'Business',
+    'coach_024':'Trading','coach_025':'Trading','coach_026':'Immobiliare',
+    'coach_027':'Trading','coach_028':'Mindset','coach_029':'Business'
+  };
+  const AVATAR_COLORS = ['#E57711','#31B15C','#3b82f6','#8b5cf6','#ec4899','#f59e0b','#06b6d4','#10b981','#ef4444','#6366f1'];
+  const CAT_CLASS = {'Trading':'cat-trading','Immobiliare':'cat-immobiliare','Business':'cat-business','Mindset':'cat-mindset'};
+
+  let adminToken = '';
+
+  function init() {
+    const p = new URLSearchParams(window.location.search);
+    adminToken = p.get('token') || sessionStorage.getItem('wup_admin_token') || '';
+    if (!adminToken) { document.getElementById('error-screen').style.display='flex'; return; }
+    sessionStorage.setItem('wup_admin_token', adminToken);
+    document.getElementById('app').style.display = 'block';
+
+    // Imposta link admin fissi
+    const adminUrl = BASE_DASH + 'admin.html?token=' + adminToken;
+    const analyticsUrl = BASE_DASH + 'analytics.html?token=' + adminToken;
+    setLink('admin-url', adminUrl);
+    setLink('analytics-url', analyticsUrl);
+
+    loadCoaches();
+  }
+
+  async function loadCoaches() {
+    try {
+      const res = await fetch(API_URL + '?action=getCoachLinks&admin_token=' + encodeURIComponent(adminToken));
+      const json = await res.json();
+      if (!json.success) {
+        if (json.code === 'UNAUTHORIZED') { document.getElementById('error-screen').style.display='flex'; return; }
+        throw new Error(json.error);
+      }
+      renderCoaches(json.data.coaches || []);
+    } catch(e) {
+      renderCoaches([]);
+    } finally {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('main').style.display = 'block';
+    }
+  }
+
+  function renderCoaches(coaches) {
+    document.getElementById('coach-count').textContent = coaches.length;
+    const grid = document.getElementById('coach-grid');
+
+    if (!coaches.length) {
+      grid.innerHTML = '<p style="color:var(--gray-400);font-size:14px;padding:8px">Nessun coach trovato. Esegui generateDashboardTokens() in Apps Script.</p>';
+      return;
+    }
+
+    coaches.sort(function(a,b){ return a.cognome.localeCompare(b.cognome); });
+
+    grid.innerHTML = coaches.map(function(c, i){
+      const initials = (c.nome[0]||'') + (c.cognome[0]||'');
+      const color = AVATAR_COLORS[i % AVATAR_COLORS.length];
+      const cat = COACH_CATEGORY[c.id] || 'Trading';
+      const catClass = CAT_CLASS[cat] || 'cat-trading';
+      const hasUrl = !!c.url;
+
+      const actions = hasUrl
+        ? '<button class="btn-copy" onclick="copyText(\'' + escJs(c.url) + '\',this)">Copia link</button>' +
+          '<a class="btn-open" href="' + escHtml(c.url) + '" target="_blank">↗ Apri</a>'
+        : '<span class="no-token">Token non generato</span>';
+
+      return '<div class="coach-card">' +
+        '<div class="coach-top">' +
+        '<div class="coach-avatar" style="background:' + color + '">' + escHtml(initials.toUpperCase()) + '</div>' +
+        '<div class="coach-info">' +
+        '<div class="coach-name">' + escHtml(c.nome + ' ' + c.cognome) + '</div>' +
+        '<div class="coach-meta">' + escHtml(c.email) + '</div>' +
+        '<span class="cat-tag ' + catClass + '">' + cat + '</span>' +
+        '</div>' +
+        '</div>' +
+        '<div class="coach-actions">' + actions + '</div>' +
+        '</div>';
+    }).join('');
+  }
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+  function setLink(id, url) {
+    const el = document.getElementById(id);
+    if (el) { el.href = url; }
+    const txt = document.getElementById(id + '-text');
+    if (txt) { txt.textContent = url; }
+  }
+
+  window.copyLink = function(id) {
+    const el = document.getElementById(id);
+    if (el) copyText(el.href, document.querySelector('[onclick="copyLink(\'' + id + '\')"]'));
+  };
+
+  window.copyText = function(text, btn) {
+    navigator.clipboard.writeText(text).then(function(){
+      if (btn) {
+        const orig = btn.textContent;
+        btn.textContent = '✓ Copiato';
+        btn.classList.add('copied');
+        setTimeout(function(){ btn.textContent = orig; btn.classList.remove('copied'); }, 1800);
+      }
+    }).catch(function(){
+      prompt('Copia questo link:', text);
+    });
+  };
+
+  function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function escJs(s){ return String(s).replace(/'/g,"\\'"); }
+
+  init();
+})();
+</script>
+</body>
+</html>

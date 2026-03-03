@@ -73,6 +73,14 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
 .cancel-btn{margin-top:8px;padding:6px 14px;background:#fff;border:2px solid var(--red);color:var(--red);border-radius:var(--radius-sm);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
 .cancel-btn:hover{background:var(--red);color:#fff}
 .cancelled-label{margin-top:8px;font-size:12px;color:var(--gray-400);font-style:italic}
+.esito-row{display:flex;align-items:center;gap:8px;margin-top:8px}
+.esito-label{font-size:11px;color:var(--gray-400);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.esito-select{padding:5px 10px;border:2px solid var(--gray-200);border-radius:var(--radius-sm);font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;background:#fff;transition:border-color .15s}
+.esito-select:focus{outline:none;border-color:var(--orange)}
+.esito-select.venduto{border-color:var(--green);color:var(--green);background:#d1fae5}
+.esito-select.non_venduto{border-color:var(--red);color:var(--red);background:#fee2e2}
+.esito-select.in_trattativa{border-color:#f59e0b;color:#b45309;background:#fef3c7}
+.esito-saving{font-size:11px;color:var(--gray-400);font-style:italic}
 
 /* Empty state */
 .empty{text-align:center;padding:48px 20px;color:var(--gray-400)}
@@ -331,6 +339,16 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
 
     const phone = b.client_phone ? '<a class="client-phone" href="tel:' + escHtml(b.client_phone) + '">' + escHtml(b.client_phone) + '</a>' : '<span style="color:var(--gray-400);font-size:13px">Nessun telefono</span>';
     const notes = b.notes ? '<div class="notes-text">📝 ' + escHtml(b.notes) + '</div>' : '';
+    const esitoVal = (b.esito || '').toLowerCase().replace('_','_');
+    const esitoClass = esitoVal === 'venduto' ? 'venduto' : esitoVal === 'non_venduto' ? 'non_venduto' : esitoVal === 'in_trattativa' ? 'in_trattativa' : '';
+    const esitoRow = !isCancelled ? '<div class="esito-row"><span class="esito-label">Esito:</span>' +
+      '<select class="esito-select ' + esitoClass + '" onchange="saveEsito(\'' + escId(b.booking_id) + '\',this)">' +
+      '<option value="">— da definire</option>' +
+      '<option value="VENDUTO"' + (b.esito==='VENDUTO'?' selected':'') + '>✅ Venduto</option>' +
+      '<option value="IN_TRATTATIVA"' + (b.esito==='IN_TRATTATIVA'?' selected':'') + '>🔄 In trattativa</option>' +
+      '<option value="NON_VENDUTO"' + (b.esito==='NON_VENDUTO'?' selected':'') + '>❌ Non venduto</option>' +
+      '</select><span class="esito-saving" id="esito-saving-' + escId(b.booking_id) + '"></span></div>' : '';
+
     const action = isCancelled
       ? '<div class="cancelled-label">Cancellata' + (b.cancelled_at ? ' il ' + formatDateShort(new Date(b.cancelled_at)) : '') + '</div>'
       : '<button class="cancel-btn" onclick="openModal(' + JSON.stringify(b).replace(/"/g,'&quot;') + ')">✕ Cancella</button>';
@@ -348,6 +366,7 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
       '<div class="client-name">' + escHtml(b.client_name + ' ' + b.client_surname) + '</div>' +
       '<div style="margin-top:4px">' + phone + '</div>' +
       notes +
+      esitoRow +
       action +
       '</div>' +
       '</div>' +
@@ -389,6 +408,28 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
   };
 
   // ── UI helpers ─────────────────────────────────────────────────────────────
+  window.saveEsito = async function(bookingId, sel) {
+    const esito = sel.value;
+    const saving = document.getElementById('esito-saving-' + bookingId);
+    if (saving) saving.textContent = 'salvataggio…';
+    sel.className = 'esito-select ' + (esito === 'VENDUTO' ? 'venduto' : esito === 'NON_VENDUTO' ? 'non_venduto' : esito === 'IN_TRATTATIVA' ? 'in_trattativa' : '');
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'updateBookingOutcome', admin_token: adminToken, booking_id: bookingId, esito: esito })
+      });
+      const json = await res.json();
+      if (saving) { saving.textContent = json.success ? '✓' : '✗ errore'; setTimeout(function(){ saving.textContent=''; }, 2000); }
+      // Aggiorna dato locale
+      const b = allBookings.find(function(x){ return x.booking_id === bookingId; });
+      if (b) b.esito = esito;
+    } catch(e) {
+      if (saving) { saving.textContent = '✗ errore rete'; setTimeout(function(){ saving.textContent=''; }, 2000); }
+    }
+  };
+
+  function escId(s){ return String(s).replace(/[^a-zA-Z0-9_-]/g,''); }
+
   function showLoading() {
     document.getElementById('bookings-list').innerHTML = '<div class="loading"><div class="spinner"></div><div style="color:var(--gray-400);font-size:14px">Caricamento…</div></div>';
   }
