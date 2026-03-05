@@ -188,7 +188,7 @@ tbody td{padding:12px 16px;font-size:13px;color:var(--gray-700)}
         <div class="kpi-card"><div class="kpi-label">Totale prenotazioni</div><div class="kpi-value orange" id="kpi-total">—</div><div class="kpi-sub">confermati + cancellati</div></div>
         <div class="kpi-card"><div class="kpi-label">Confermati</div><div class="kpi-value green" id="kpi-confirmed">—</div><div class="kpi-sub" id="kpi-confirmed-sub"></div></div>
         <div class="kpi-card"><div class="kpi-label">Cancellati</div><div class="kpi-value red" id="kpi-cancelled">—</div><div class="kpi-sub" id="kpi-cancelled-sub"></div></div>
-        <div class="kpi-card"><div class="kpi-label">Ore sessioni</div><div class="kpi-value blue" id="kpi-hours">—</div><div class="kpi-sub">@ 20 min/sessione</div></div>
+        <div class="kpi-card"><div class="kpi-label">Ore sessioni</div><div class="kpi-value blue" id="kpi-hours">—</div><div class="kpi-sub">@ 15 min/sessione</div></div>
         <div class="kpi-card"><div class="kpi-label">Coach attivi</div><div class="kpi-value purple" id="kpi-coaches">—</div><div class="kpi-sub">con almeno 1 prenotazione</div></div>
         <div class="kpi-card"><div class="kpi-label">Tasso cancellazione</div><div class="kpi-value" id="kpi-cancel-rate" style="color:var(--gray-700)">—</div><div class="kpi-sub">sul totale prenotazioni</div></div>
       </div>
@@ -369,7 +369,7 @@ tbody td{padding:12px 16px;font-size:13px;color:var(--gray-700)}
   // ── KPIs ──────────────────────────────────────────────────────────────────
   function renderKPIs(confirmed, cancelled) {
     const total = confirmed.length + cancelled.length;
-    const hours = (confirmed.length * 20 / 60).toFixed(1);
+    const hours = (confirmed.length * 15 / 60).toFixed(1);
     const coaches = new Set(confirmed.map(function(b){ return b.coach_id; })).size;
     const rate = total > 0 ? Math.round(cancelled.length / total * 100) : 0;
 
@@ -573,7 +573,7 @@ tbody td{padding:12px 16px;font-size:13px;color:var(--gray-700)}
         category: COACH_CATEGORY[c.id] || 'Trading',
         confirmed: c.confirmed,
         cancelled: c.cancelled,
-        hours: +(c.confirmed * 20 / 60).toFixed(1),
+        hours: +(c.confirmed * 15 / 60).toFixed(1),
         pct: totalConfirmed > 0 ? Math.round(c.confirmed / totalConfirmed * 100) : 0,
         cancelRate: total > 0 ? Math.round(c.cancelled / total * 100) : 0
       };
