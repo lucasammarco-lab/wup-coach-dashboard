@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23E57711'/><text x='50' y='68' font-size='60' font-weight='bold' font-family='Arial' fill='white' text-anchor='middle'>W</text></svg>">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>WUP — Calendario Disponibilit&agrave; Coach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --orange:#E57711;--orange-dark:#c96510;--green:#31B15C;--green-dark:#279a4f;
+  --red:#e53e3e;--red-dark:#c53030;
+  --gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-300:#d1d5db;
+  --gray-400:#9ca3af;--gray-500:#6b7280;--gray-600:#4b5563;--gray-700:#374151;
+  --gray-800:#1f2937;--gray-900:#111827;
+  --radius-sm:8px;--radius:12px;--radius-lg:16px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.08);
+  --shadow:0 4px 16px rgba(0,0,0,.10);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.14);
+  --cat-trading:#3b82f6;--cat-immobiliare:#22c55e;--cat-business:#8b5cf6;
+  --cat-mindset:#ec4899;--cat-mentor:#13284C;
+}
+body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-800);min-height:100vh}
+
+/* Header */
+.header{background:linear-gradient(135deg,var(--orange) 0%,var(--orange-dark) 100%);padding:16px 20px;position:sticky;top:0;z-index:100;box-shadow:var(--shadow)}
+.header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.logo{color:#fff;font-size:24px;font-weight:800;letter-spacing:2px}
+.logo-sub{color:rgba(255,255,255,.8);font-size:11px;letter-spacing:.5px;text-transform:uppercase}
+.header-title{color:#fff;font-size:15px;font-weight:600;margin-left:auto;opacity:.9}
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,255,255,.18);color:#fff;border:1.5px solid rgba(255,255,255,.3);border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s;font-family:inherit;margin-left:auto}
+.back-btn:hover{background:rgba(255,255,255,.3)}
+
+/* Day tabs */
+.tabs-bar{background:#fff;border-bottom:1px solid var(--gray-200);padding:12px 20px;position:sticky;top:64px;z-index:90;box-shadow:var(--shadow-sm)}
+.tabs-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.day-tab{padding:10px 20px;border:2px solid var(--gray-300);border-radius:var(--radius-sm);background:#fff;color:var(--gray-600);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;font-family:inherit;letter-spacing:.3px}
+.day-tab:hover{border-color:var(--orange);color:var(--orange)}
+.day-tab.active{background:var(--orange);border-color:var(--orange);color:#fff}
+.filter-group{margin-left:auto;display:flex;align-items:center;gap:8px}
+.cat-filter{padding:8px 14px;border:2px solid var(--gray-300);border-radius:var(--radius-sm);background:#fff;color:var(--gray-700);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit}
+.cat-filter:focus{outline:none;border-color:var(--orange)}
+.search-input{padding:8px 12px;border:2px solid var(--gray-300);border-radius:var(--radius-sm);background:#fff;color:var(--gray-700);font-size:13px;font-weight:500;font-family:inherit;width:160px}
+.search-input:focus{outline:none;border-color:var(--orange)}
+
+/* Stats strip */
+.stats-strip{max-width:1200px;margin:16px auto 0;padding:0 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.stat-card{background:#fff;border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow-sm);text-align:center}
+.stat-value{font-size:28px;font-weight:800;color:var(--orange)}
+.stat-value.green{color:var(--green)}
+.stat-label{font-size:11px;color:var(--gray-500);margin-top:2px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+
+/* Schedule container */
+.schedule{max-width:1200px;margin:16px auto 32px;padding:0 20px}
+
+/* Timeline header */
+.timeline-header{display:flex;align-items:flex-end;padding:0 0 8px;margin-bottom:4px;border-bottom:2px solid var(--gray-300)}
+.tl-coach-col{width:220px;min-width:220px;flex-shrink:0;font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px;padding-left:4px}
+.tl-bar-col{flex:1;position:relative;display:flex;align-items:flex-end;min-width:0}
+.hour-mark{position:absolute;bottom:0;font-size:10px;font-weight:600;color:var(--gray-400);transform:translateX(-50%)}
+.hour-line{position:absolute;bottom:-4px;width:1px;height:8px;background:var(--gray-300)}
+
+/* Coach row */
+.coach-row{display:flex;align-items:center;padding:6px 0;border-bottom:1px solid var(--gray-100);transition:background .1s}
+.coach-row:hover{background:rgba(229,119,17,.04)}
+.coach-info{width:220px;min-width:220px;flex-shrink:0;display:flex;align-items:center;gap:10px;padding-right:12px}
+.avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;letter-spacing:.5px}
+.coach-details{min-width:0}
+.coach-name{font-size:13px;font-weight:700;color:var(--gray-800);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.coach-meta{display:flex;align-items:center;gap:6px;margin-top:2px}
+.cat-badge{padding:1px 7px;border-radius:10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.slot-count{font-size:11px;font-weight:600;color:var(--gray-400)}
+
+/* Timeline bar */
+.tl-bar-wrapper{flex:1;position:relative;height:32px;min-width:0}
+.tl-bar-bg{position:absolute;inset:0;background:var(--gray-100);border-radius:6px;overflow:hidden}
+.tl-bar-bg::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent,transparent calc(100%/9 - 0.5px),var(--gray-200) calc(100%/9 - 0.5px),var(--gray-200) calc(100%/9 + 0.5px))}
+.avail-block{position:absolute;top:3px;bottom:3px;border-radius:4px;cursor:pointer;transition:filter .15s,transform .15s;z-index:2}
+.avail-block:hover{filter:brightness(1.1);transform:scaleY(1.15);z-index:3}
+
+/* Tooltip */
+.tooltip{position:fixed;z-index:500;background:var(--gray-900);color:#fff;padding:8px 12px;border-radius:var(--radius-sm);font-size:12px;font-weight:500;pointer-events:none;white-space:nowrap;box-shadow:var(--shadow-lg);opacity:0;transition:opacity .12s}
+.tooltip.visible{opacity:1}
+.tooltip-time{font-weight:700;font-size:13px}
+.tooltip-slots{color:var(--gray-300);margin-top:2px}
+
+/* Footer */
+.footer{background:var(--gray-900);color:var(--gray-400);text-align:center;padding:24px 20px;font-size:12px}
+.footer a{color:var(--gray-300);text-decoration:none;margin:0 8px}
+.footer a:hover{color:#fff}
+
+/* Error screen */
+.error-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.error-card{background:#fff;border-radius:var(--radius-lg);padding:40px 32px;text-align:center;max-width:380px;box-shadow:var(--shadow-lg)}
+.error-card h2{color:var(--red);margin:12px 0 8px;font-size:20px}
+.error-card p{color:var(--gray-500);font-size:14px}
+
+/* Empty */
+.empty{text-align:center;padding:48px 20px;color:var(--gray-400)}
+.empty-icon{font-size:40px;margin-bottom:12px}
+
+/* Legend */
+.legend{max-width:1200px;margin:0 auto 8px;padding:0 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--gray-500)}
+.legend-dot{width:12px;height:12px;border-radius:3px}
+
+@media(max-width:800px){
+  .coach-info{width:160px;min-width:160px}
+  .tl-coach-col{width:160px;min-width:160px}
+  .header-inner{flex-wrap:wrap}
+  .filter-group{margin-left:0;width:100%}
+  .search-input{flex:1}
+  .cat-filter{flex:1}
+}
+@media(max-width:600px){
+  .coach-info{width:120px;min-width:120px}
+  .tl-coach-col{width:120px;min-width:120px}
+  .avatar{width:28px;height:28px;font-size:10px}
+  .coach-name{font-size:11px}
+  .cat-badge{font-size:9px;padding:1px 5px}
+  .slot-count{font-size:10px}
+  .stats-strip{grid-template-columns:repeat(3,1fr)}
+  .tabs-inner{gap:4px}
+  .day-tab{padding:8px 12px;font-size:12px}
+}
+</style>
+</head>
+<body>
+
+<div id="error-screen" class="error-screen" style="display:none">
+  <div class="error-card">
+    <div style="font-size:48px">&#128274;</div>
+    <h2>Accesso negato</h2>
+    <p>Token non valido o mancante. Contatta l'amministratore.</p>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+
+<div class="header">
+  <div class="header-inner">
+    <div>
+      <div class="logo">WUP</div>
+      <div class="logo-sub">Coach Calendar</div>
+    </div>
+    <a id="back-link" href="#" class="back-btn">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 8H1M8 15l-7-7 7-7"/></svg>
+      Links
+    </a>
+  </div>
+</div>
+
+<div class="tabs-bar">
+  <div class="tabs-inner">
+    <button class="day-tab active" data-day="fri" onclick="switchDay('fri')">VEN 13</button>
+    <button class="day-tab" data-day="sat" onclick="switchDay('sat')">SAB 14</button>
+    <button class="day-tab" data-day="sun" onclick="switchDay('sun')">DOM 15</button>
+    <div class="filter-group">
+      <select class="cat-filter" id="catFilter" onchange="renderSchedule()">
+        <option value="">Tutte le categorie</option>
+        <option value="Trading">Trading</option>
+        <option value="Immobiliare">Immobiliare</option>
+        <option value="Business">Business</option>
+        <option value="Mindset">Mindset</option>
+        <option value="Mentor">Mentor</option>
+      </select>
+      <input type="text" class="search-input" id="searchInput" placeholder="Cerca coach..." oninput="renderSchedule()">
+    </div>
+  </div>
+</div>
+
+<div class="stats-strip" id="statsStrip"></div>
+
+<div class="schedule" id="scheduleArea">
+  <div class="legend" id="legend"></div>
+  <div id="timelineHeader"></div>
+  <div id="coachRows"></div>
+</div>
+
+<div class="tooltip" id="tooltip">
+  <div class="tooltip-time" id="tooltipTime"></div>
+  <div class="tooltip-slots" id="tooltipSlots"></div>
+</div>
+
+<footer class="footer">
+  &copy; 2026 ABTG Srl &mdash; Tutti i diritti riservati &nbsp;|&nbsp;
+  <a href="https://www.iubenda.com/privacy-policy/96332498" target="_blank">Privacy Policy</a>
+  <a href="https://www.iubenda.com/privacy-policy/96332498/cookie-policy" target="_blank">Cookie Policy</a>
+</footer>
+
+</div>
+
+<script>
+(function(){
+  // Token check
+  var VALID='f05edf3584610138878f6d799daea1fd';
+  var params=new URLSearchParams(window.location.search);
+  var token=params.get('token');
+  if(token!==VALID){
+    document.getElementById('error-screen').style.display='flex';
+    return;
+  }
+  document.getElementById('app').style.display='';
+  document.getElementById('back-link').href='links.html?token='+token;
+
+  // Data
+  var COACHES=[
+    {id:'coach_001',name:'Giuseppe De Marco',cat:'Trading'},
+    {id:'coach_002',name:'Andrea Garagiola',cat:'Immobiliare'},
+    {id:'coach_003',name:'Colombo',cat:'Trading'},
+    {id:'coach_004',name:'Pasetto',cat:'Trading'},
+    {id:'coach_005',name:'Monza',cat:'Trading'},
+    {id:'coach_006',name:'Marras',cat:'Immobiliare'},
+    {id:'coach_007',name:'Pagliano',cat:'Trading'},
+    {id:'coach_009',name:'Ortelli',cat:'Mentor'},
+    {id:'coach_010',name:'Redi',cat:'Mentor'},
+    {id:'coach_011',name:'Fasciano',cat:'Trading'},
+    {id:'coach_013',name:'Sgambato',cat:'Trading'},
+    {id:'coach_014',name:'Acquistapace',cat:'Trading'},
+    {id:'coach_015',name:'Lovallo',cat:'Mindset'},
+    {id:'coach_016',name:'Rodriguez',cat:'Business'},
+    {id:'coach_017',name:'Crestan',cat:'Immobiliare'},
+    {id:'coach_018',name:'Migliaccio',cat:'Mentor'},
+    {id:'coach_024',name:'Bertacchi',cat:'Trading'},
+    {id:'coach_026',name:'Cuoco',cat:'Immobiliare'},
+    {id:'coach_027',name:'Lavorenti',cat:'Trading'},
+    {id:'coach_029',name:'Salvato',cat:'Mentor'}
+  ];
+
+  var AVAIL={
+    fri:{
+      coach_001:[0,0,1,1,1,1,1,1,0,0,1,1,1,0,0,0,0,0,1,1,1,1,1,0,0,1,1],
+      coach_002:[1,1,1,0,1,1,0,1,1,1,1,0,1,1,1,1,0,0,0,1,1,1,1,1,0,0,1],
+      coach_003:[0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1,1,1,1],
+      coach_004:[1,1,1,1,0,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,0,0,1,1,1],
+      coach_005:[0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,1,0,0,0,0,1,1,1,1,1,0,0],
+      coach_006:[1,1,1,0,1,1,0,0,1,1,1,1,1,0,0,1,0,1,1,1,0,1,1,1,0,0,1],
+      coach_007:[0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0],
+      coach_009:[1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,0],
+      coach_010:[1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,0],
+      coach_011:[1,1,1,0,0,1,1,1,1,1,0,0,0,0,1,1,1,1,0,1,1,1,1,0,1,1,1],
+      coach_013:[0,0,0,0,1,1,1,1,1,0,0,0,0,1,1,1,1,0,0,1,1,1,1,1,0,0,1],
+      coach_014:[1,1,1,1,0,0,1,1,1,0,0,0,1,1,1,0,1,1,1,0,0,1,1,1,1,0,0],
+      coach_015:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1],
+      coach_016:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1],
+      coach_017:[0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1],
+      coach_018:[1,1,1,0,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1,1,1,1],
+      coach_024:[0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,0,1,1,1],
+      coach_026:[0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+      coach_027:[0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,1,0,0,0,0,1,1,1,1,1,0,0],
+      coach_029:[1,1,1,0,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1,1,1,1]
+    },
+    sat:{
+      coach_001:[0,0,0,1,1,1,1,0,1,1,1,0,0,0,0,1,1,1,1,1,0,0,1,1,1,1,1],
+      coach_002:[1,1,1,1,0,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      coach_003:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0],
+      coach_004:[1,1,1,1,0,1,1,1,0,1,1,1,1,1,0,0,0,0,1,1,1,1,1,0,0,1,1],
+      coach_005:[0,0,0,1,1,1,1,0,1,1,1,1,0,0,0,0,0,1,1,1,1,0,0,1,1,1,1],
+      coach_006:[1,1,1,1,1,1,0,0,1,1,1,1,0,0,0,0,1,1,1,1,1,0,0,0,1,1,1],
+      coach_007:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0],
+      coach_009:[1,1,1,0,1,1,1,0,0,1,1,1,1,1,1,0,1,1,1,0,0,0,1,1,1,1,1],
+      coach_010:[0,1,1,1,1,0,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,0,1,1,1,1,1],
+      coach_011:[0,0,1,1,1,1,1,1,0,0,1,1,1,1,0,0,0,0,1,1,1,1,1,1,0,0,1],
+      coach_013:[1,1,1,1,1,1,0,0,1,1,1,1,1,0,0,0,1,1,1,1,0,0,1,1,1,1,0],
+      coach_014:[0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0],
+      coach_015:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      coach_016:[0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      coach_017:[0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1],
+      coach_018:[1,1,1,0,1,1,1,0,0,1,1,1,1,1,1,0,1,1,1,0,0,0,1,1,1,1,1],
+      coach_024:[0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      coach_026:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1],
+      coach_027:[0,0,0,1,1,1,1,0,1,1,1,1,0,0,0,0,0,1,1,1,1,0,0,1,1,1,1],
+      coach_029:[0,1,1,1,1,0,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,0,1,1,1,1,1]
+    },
+    sun:{
+      coach_001:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1],
+      coach_002:[1,1,1,0,0,0,0,0,0,1,1,1,1,0,0,0,1,1,1,1,0,1,1,0,0,1,1],
+      coach_003:[0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1],
+      coach_004:[0,0,1,1,1,0,0,0,0,1,1,0,0,0,1,1,1,1,0,0,1,1,1,1,0,0,0],
+      coach_005:[0,1,1,1,1,0,0,0,0,1,1,1,1,1,0,0,0,1,1,1,1,0,1,1,1,1,0],
+      coach_006:[1,1,1,1,1,0,0,0,0,1,1,0,0,0,1,1,1,1,1,0,0,1,1,0,0,1,1],
+      coach_007:[0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1],
+      coach_009:[1,1,1,1,0,1,1,1,1,0,1,1,1,1,0,0,0,1,1,1,1,1,0,0,1,1,1],
+      coach_010:[0,0,1,1,1,1,0,0,1,1,1,1,0,0,1,1,1,1,0,0,1,1,1,1,1,1,1],
+      coach_011:[0,0,1,1,1,0,0,0,0,1,1,1,0,0,0,1,1,1,1,1,1,0,0,1,1,1,1],
+      coach_013:[0,0,1,1,1,0,0,0,0,1,1,1,1,1,0,0,0,1,1,1,1,1,1,0,0,1,1],
+      coach_014:[0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,1,1,1,1,0,1,1,1,0,0],
+      coach_015:[0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      coach_016:[0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,0,1,1,1,1,1,0,1],
+      coach_017:[0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1],
+      coach_018:[0,0,1,1,1,1,0,0,1,1,1,1,0,0,1,1,1,1,0,0,1,1,1,1,1,1,1],
+      coach_024:[1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,0,0,0,1,1,1,1,0,0,0,1,1],
+      coach_026:[0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      coach_027:[0,1,1,1,1,0,0,0,0,1,1,1,1,1,0,0,0,1,1,1,1,0,1,1,1,1,0],
+      coach_029:[1,1,1,1,0,1,1,1,1,0,1,1,1,1,0,0,0,1,1,1,1,1,0,0,1,1,1]
+    }
+  };
+
+  var SLOTS=[];
+  for(var h=9;h<=17;h++){
+    for(var m=0;m<60;m+=20){
+      if(h===17&&m>40)break;
+      SLOTS.push(('0'+h).slice(-2)+':'+('0'+m).slice(-2));
+    }
+  }
+  // SLOTS length = 27
+
+  var DAY_LABELS={fri:'Venerd\u00ec 13 Marzo',sat:'Sabato 14 Marzo',sun:'Domenica 15 Marzo'};
+  var CAT_COLORS={Trading:'var(--cat-trading)',Immobiliare:'var(--cat-immobiliare)',Business:'var(--cat-business)',Mindset:'var(--cat-mindset)',Mentor:'var(--cat-mentor)'};
+  var CAT_TEXT={Trading:'#fff',Immobiliare:'#fff',Business:'#fff',Mindset:'#fff',Mentor:'#fff'};
+
+  var currentDay='fri';
+  var tooltip=document.getElementById('tooltip');
+
+  function getInitials(name){
+    var parts=name.split(' ');
+    if(parts.length>=2)return(parts[0][0]+parts[parts.length-1][0]).toUpperCase();
+    return name.substring(0,2).toUpperCase();
+  }
+
+  function countAvail(arr){
+    var c=0;for(var i=0;i<arr.length;i++)if(arr[i])c++;return c;
+  }
+
+  // Find contiguous available blocks
+  function getBlocks(arr){
+    var blocks=[];
+    var i=0;
+    while(i<arr.length){
+      if(arr[i]===1){
+        var start=i;
+        while(i<arr.length&&arr[i]===1)i++;
+        blocks.push({start:start,end:i-1,count:i-start});
+      }else{
+        i++;
+      }
+    }
+    return blocks;
+  }
+
+  function slotToPercent(idx){
+    // 27 slots from 09:00 to 17:40. Timeline goes 09:00 to 18:00 = 540 minutes
+    // slot idx 0 = minute 0, each slot = 20 min apart
+    var minuteStart=idx*20;
+    return(minuteStart/540)*100;
+  }
+  function slotEndPercent(idx){
+    // end of slot = start + 20min (visual width covers the 20-min interval)
+    var minuteEnd=(idx+1)*20;
+    return(minuteEnd/540)*100;
+  }
+
+  function addEndTime(slotIdx){
+    // The session ends 15 min after slot start
+    var totalMin=9*60+slotIdx*20+15;
+    var h=Math.floor(totalMin/60);
+    var m=totalMin%60;
+    return('0'+h).slice(-2)+':'+('0'+m).slice(-2);
+  }
+
+  window.switchDay=function(day){
+    currentDay=day;
+    document.querySelectorAll('.day-tab').forEach(function(b){
+      b.classList.toggle('active',b.getAttribute('data-day')===day);
+    });
+    renderSchedule();
+  };
+
+  window.renderSchedule=function(){
+    var dayData=AVAIL[currentDay];
+    var catFilter=document.getElementById('catFilter').value;
+    var search=document.getElementById('searchInput').value.toLowerCase().trim();
+
+    // Filter and sort coaches
+    var coaches=COACHES.filter(function(c){
+      if(catFilter&&c.cat!==catFilter)return false;
+      if(search&&c.name.toLowerCase().indexOf(search)===-1)return false;
+      return true;
+    }).map(function(c){
+      var avail=dayData[c.id]||[];
+      return{id:c.id,name:c.name,cat:c.cat,avail:avail,availCount:countAvail(avail)};
+    }).sort(function(a,b){return b.availCount-a.availCount});
+
+    // Stats
+    var totalCoaches=coaches.length;
+    var totalSlots=coaches.reduce(function(s,c){return s+c.availCount},0);
+    var avgSlots=totalCoaches?Math.round(totalSlots/totalCoaches):0;
+    var maxSlots=coaches.length?coaches[0].availCount:0;
+
+    document.getElementById('statsStrip').innerHTML=
+      '<div class="stat-card"><div class="stat-value">'+totalCoaches+'</div><div class="stat-label">Coach</div></div>'+
+      '<div class="stat-card"><div class="stat-value green">'+totalSlots+'</div><div class="stat-label">Slot disponibili</div></div>'+
+      '<div class="stat-card"><div class="stat-value" style="color:var(--cat-trading)">'+avgSlots+'</div><div class="stat-label">Media per coach</div></div>'+
+      '<div class="stat-card"><div class="stat-value" style="color:var(--cat-business)">'+maxSlots+'</div><div class="stat-label">Max disponibilit&agrave;</div></div>';
+
+    // Legend
+    document.getElementById('legend').innerHTML=
+      '<span style="font-size:12px;font-weight:700;color:var(--gray-600)">'+DAY_LABELS[currentDay]+'</span>'+
+      Object.keys(CAT_COLORS).map(function(cat){
+        return '<span class="legend-item"><span class="legend-dot" style="background:'+CAT_COLORS[cat]+'"></span>'+cat+'</span>';
+      }).join('');
+
+    // Timeline header with hour markers
+    var headerHTML='<div class="timeline-header"><div class="tl-coach-col">Coach</div><div class="tl-bar-col" style="height:24px">';
+    for(var h=9;h<=18;h++){
+      var pct=((h-9)*60/540)*100;
+      headerHTML+='<span class="hour-mark" style="left:'+pct+'%">'+h+':00</span>';
+      headerHTML+='<span class="hour-line" style="left:'+pct+'%"></span>';
+    }
+    headerHTML+='</div></div>';
+    document.getElementById('timelineHeader').innerHTML=headerHTML;
+
+    // Coach rows
+    if(!coaches.length){
+      document.getElementById('coachRows').innerHTML='<div class="empty"><div class="empty-icon">&#128197;</div><div>Nessun coach trovato</div></div>';
+      return;
+    }
+
+    var rowsHTML='';
+    coaches.forEach(function(c){
+      var blocks=getBlocks(c.avail);
+      var color=CAT_COLORS[c.cat]||'var(--gray-500)';
+
+      rowsHTML+='<div class="coach-row">';
+      rowsHTML+='<div class="coach-info">';
+      rowsHTML+='<div class="avatar" style="background:'+color+'">'+getInitials(c.name)+'</div>';
+      rowsHTML+='<div class="coach-details">';
+      rowsHTML+='<div class="coach-name">'+c.name+'</div>';
+      rowsHTML+='<div class="coach-meta">';
+      rowsHTML+='<span class="cat-badge" style="background:'+color+';color:'+CAT_TEXT[c.cat]+'">'+c.cat+'</span>';
+      rowsHTML+='<span class="slot-count">'+c.availCount+'/27</span>';
+      rowsHTML+='</div></div></div>';
+
+      rowsHTML+='<div class="tl-bar-wrapper"><div class="tl-bar-bg">';
+      // hour grid lines
+      for(var h=9;h<=18;h++){
+        var pct=((h-9)*60/540)*100;
+        if(h>9&&h<18)rowsHTML+='<div style="position:absolute;top:0;bottom:0;left:'+pct+'%;width:1px;background:var(--gray-200);z-index:1"></div>';
+      }
+      blocks.forEach(function(b){
+        var left=slotToPercent(b.start);
+        var right=slotEndPercent(b.end);
+        var width=right-left;
+        var startTime=SLOTS[b.start];
+        var endTime=addEndTime(b.end);
+        rowsHTML+='<div class="avail-block" style="left:'+left+'%;width:'+width+'%;background:'+color+';opacity:0.85" '+
+          'data-start="'+startTime+'" data-end="'+endTime+'" data-count="'+b.count+'" data-cat="'+c.cat+'" '+
+          'onmouseenter="showTip(event,this)" onmouseleave="hideTip()" '+
+          'ontouchstart="showTip(event,this)" ontouchend="hideTip()"></div>';
+      });
+      rowsHTML+='</div></div>';
+      rowsHTML+='</div>';
+    });
+    document.getElementById('coachRows').innerHTML=rowsHTML;
+  };
+
+  window.showTip=function(e,el){
+    var t=document.getElementById('tooltip');
+    var tt=document.getElementById('tooltipTime');
+    var ts=document.getElementById('tooltipSlots');
+    tt.textContent=el.getAttribute('data-start')+' \u2013 '+el.getAttribute('data-end');
+    ts.textContent=el.getAttribute('data-count')+' slot disponibil'+(el.getAttribute('data-count')==='1'?'e':'i');
+    t.classList.add('visible');
+
+    var rect=el.getBoundingClientRect();
+    var tw=t.offsetWidth;
+    var th=t.offsetHeight;
+    var left=rect.left+rect.width/2-tw/2;
+    var top=rect.top-th-8;
+    if(left<4)left=4;
+    if(left+tw>window.innerWidth-4)left=window.innerWidth-4-tw;
+    if(top<4)top=rect.bottom+8;
+    t.style.left=left+'px';
+    t.style.top=top+'px';
+  };
+
+  window.hideTip=function(){
+    document.getElementById('tooltip').classList.remove('visible');
+  };
+
+  // Initial render
+  renderSchedule();
+})();
+</script>
+</body>
+</html>
