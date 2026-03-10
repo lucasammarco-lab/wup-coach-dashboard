@@ -189,9 +189,6 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
       <button class="day-btn" data-date="2026-03-14" onclick="setDayFilter(this,'2026-03-14')">Sab 14</button>
       <button class="day-btn" data-date="2026-03-15" onclick="setDayFilter(this,'2026-03-15')">Dom 15</button>
       <input type="text" class="search-input" id="search-input" placeholder="Cerca cliente..." oninput="onSearch()">
-      <select class="coach-select" id="coach-select" onchange="setCoachFilter(this.value)">
-        <option value="">Tutti i coach</option>
-      </select>
       <select class="esito-filter" id="esito-filter" onchange="setEsitoFilter(this.value)">
         <option value="">Tutti gli esiti</option>
         <option value="__none__">Da definire</option>
@@ -262,7 +259,6 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
   var sellerName = '';
   var allBookings = [];
   var currentDay = 'all';
-  var currentCoach = '';
   var currentSearch = '';
   var currentEsito = '';
   var refreshTimer = null;
@@ -327,7 +323,6 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
       var bookingsData = (json.data && json.data.bookings) ? json.data.bookings : (json.bookings || []);
       allBookings = bookingsData.filter(function(b) { return b.status === 'CONFIRMED'; });
       updateStats();
-      populateCoachSelect();
       renderBookings();
     } catch(e) {
       showAlert('Errore di rete. Ricarica la pagina.', 'error');
@@ -355,10 +350,6 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
     currentDay = date;
     renderBookings();
   };
-  window.setCoachFilter = function(coachId) {
-    currentCoach = coachId;
-    renderBookings();
-  };
   window.setEsitoFilter = function(val) {
     currentEsito = val;
     renderBookings();
@@ -369,12 +360,10 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
   };
   window.clearFilters = function() {
     currentDay = 'all';
-    currentCoach = '';
     currentSearch = '';
     currentEsito = '';
     document.querySelectorAll('.filter-bar .day-btn').forEach(function(b){ b.classList.remove('active'); });
     document.querySelector('.filter-bar [data-date="all"]').classList.add('active');
-    document.getElementById('coach-select').value = '';
     document.getElementById('search-input').value = '';
     document.getElementById('esito-filter').value = '';
     renderBookings();
@@ -383,7 +372,6 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
   function getFiltered() {
     return allBookings.filter(function(b) {
       if (currentDay !== 'all' && !b.start_datetime.startsWith(currentDay)) return false;
-      if (currentCoach && b.coach_id !== currentCoach) return false;
       if (currentSearch) {
         var fullName = ((b.client_name || '') + ' ' + (b.client_surname || '')).toLowerCase();
         var email = (b.client_email || '').toLowerCase();
@@ -394,16 +382,6 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
       if (currentEsito && currentEsito !== '__none__' && b.esito !== currentEsito) return false;
       return true;
     });
-  }
-
-  function populateCoachSelect() {
-    var sel = document.getElementById('coach-select');
-    var coaches = {};
-    allBookings.forEach(function(b) { coaches[b.coach_id] = b.coach_name; });
-    var opts = Object.keys(coaches).sort().map(function(id) {
-      return '<option value="' + id + '">' + escHtml(coaches[id]) + '</option>';
-    });
-    sel.innerHTML = '<option value="">Tutti i coach</option>' + opts.join('');
   }
 
   // ── Render bookings ────────────────────────────────────────────────────────
