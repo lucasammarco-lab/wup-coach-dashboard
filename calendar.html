@@ -11,78 +11,110 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --orange:#E57711;--orange-dark:#c96510;--orange-light:#fdf1e4;
+  --orange:#E57711;--orange-dark:#c96510;--orange-light:#fff7ed;
   --gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-300:#d1d5db;
   --gray-400:#9ca3af;--gray-500:#6b7280;--gray-600:#4b5563;--gray-700:#374151;
   --gray-800:#1f2937;--gray-900:#111827;
   --radius-sm:8px;--radius:12px;--radius-lg:16px;
-  --shadow-sm:0 1px 3px rgba(0,0,0,.08);--shadow:0 4px 16px rgba(0,0,0,.10);
+  --shadow-sm:0 1px 3px rgba(0,0,0,.06);--shadow:0 4px 16px rgba(0,0,0,.10);
+  --row-h:52px;--panel-w:220px;
 }
 html,body{height:100%}
-body{font-family:'Inter',sans-serif;background:#fff;color:var(--gray-800);display:flex;flex-direction:column}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:var(--gray-800);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
 
 /* ===== HEADER ===== */
-.header{background:linear-gradient(135deg,var(--gray-900) 0%,#1f2937 100%);padding:14px 20px;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.18)}
-.header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.back-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:var(--radius-sm);color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:none;transition:background .15s}
-.back-btn:hover{background:rgba(255,255,255,.2)}
+.header{background:var(--gray-900);padding:14px 24px;flex-shrink:0;box-shadow:0 2px 12px rgba(0,0,0,.25)}
+.header-inner{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:var(--radius-sm);color:rgba(255,255,255,.85);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:none;transition:all .2s}
+.back-btn:hover{background:rgba(255,255,255,.15);color:#fff}
 .logo{color:#fff;font-size:22px;font-weight:800;letter-spacing:2px}
 .logo span{color:var(--orange)}
-.header-title{color:rgba(255,255,255,.85);font-size:14px;font-weight:500;margin-left:4px}
+.header-title{color:rgba(255,255,255,.7);font-size:14px;font-weight:500}
 .header-right{margin-left:auto}
 
-/* ===== TOOLBAR ===== */
-.toolbar{background:var(--gray-50);border-bottom:1px solid var(--gray-200);padding:12px 20px;flex-shrink:0}
-.toolbar-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.coach-select{padding:8px 36px 8px 12px;border:1px solid var(--gray-300);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:500;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' viewBox='0 0 12 12'%3E%3Cpath d='M3 5l3 3 3-3' stroke='%236b7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") right 12px center no-repeat;appearance:none;-webkit-appearance:none;cursor:pointer;min-width:240px;color:var(--gray-800)}
-.coach-select:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 3px rgba(229,119,17,.15)}
-.cat-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.3px}
-.cat-badge.trading{background:#dbeafe;color:#2563eb}
-.cat-badge.immobiliare{background:#dcfce7;color:#16a34a}
-.cat-badge.business{background:#ede9fe;color:#7c3aed}
-.cat-badge.mindset{background:#fce7f3;color:#db2777}
-.cat-badge.mentor{background:#e2e8f0;color:#13284C}
-.stats-bar{font-size:12px;color:var(--gray-500);font-weight:500;margin-left:auto}
-.stats-bar strong{color:var(--gray-800)}
+/* ===== DAY TABS ===== */
+.day-tabs{display:flex;gap:0;background:var(--gray-50);border-bottom:1px solid var(--gray-200);padding:0 24px;flex-shrink:0}
+.day-tabs-inner{max-width:1440px;margin:0 auto;display:flex;width:100%}
+.day-tab{flex:1;max-width:200px;padding:14px 20px;text-align:center;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;user-select:none;position:relative}
+.day-tab:hover{background:rgba(229,119,17,.04)}
+.day-tab.active{border-bottom-color:var(--orange);background:#fff}
+.day-tab .dt-day{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--gray-400)}
+.day-tab.active .dt-day{color:var(--orange)}
+.day-tab .dt-num{font-size:22px;font-weight:800;color:var(--gray-700);line-height:1.3;margin-top:1px}
+.day-tab.active .dt-num{color:var(--gray-900)}
 
-/* ===== CALENDAR LAYOUT ===== */
-.cal-outer{flex:1;overflow:auto;position:relative}
-.cal-table{display:grid;grid-template-columns:60px 1fr 1fr 1fr;min-width:640px}
+/* ===== STATS BAR ===== */
+.stats-bar{background:#fff;border-bottom:1px solid var(--gray-200);padding:12px 24px;flex-shrink:0}
+.stats-inner{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.stat-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray-500)}
+.stat-val{font-size:18px;font-weight:700;color:var(--gray-900)}
+.stat-divider{width:1px;height:28px;background:var(--gray-200)}
 
-/* Sticky day headers */
-.dh-corner{position:sticky;top:0;z-index:30;background:#fff;border-bottom:1px solid var(--gray-200);border-right:1px solid var(--gray-200)}
-.dh{position:sticky;top:0;z-index:30;background:#fff;border-bottom:1px solid var(--gray-200);padding:12px 8px 10px;text-align:center}
-.dh+.dh{border-left:1px solid var(--gray-100)}
-.dh-name{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--gray-400)}
-.dh-name.is-today{color:var(--orange)}
-.dh-num{font-size:26px;font-weight:700;color:var(--gray-800);line-height:1.15;margin-top:2px}
-.dh-num.is-today{background:var(--orange);color:#fff;width:38px;height:38px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:20px}
+/* ===== FILTERS ===== */
+.filters{background:#fff;border-bottom:1px solid var(--gray-200);padding:10px 24px;flex-shrink:0}
+.filters-inner{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.search-box{padding:8px 12px 8px 36px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;background:#fff;color:var(--gray-800);width:220px;transition:border-color .2s;position:relative}
+.search-box:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 3px rgba(229,119,17,.1)}
+.search-wrap{position:relative}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--gray-400)}
+.cat-filter{padding:8px 32px 8px 12px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:500;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' viewBox='0 0 12 12'%3E%3Cpath d='M3 5l3 3 3-3' stroke='%236b7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") right 10px center no-repeat;appearance:none;-webkit-appearance:none;cursor:pointer;color:var(--gray-800)}
+.cat-filter:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 3px rgba(229,119,17,.1)}
 
-/* Hour rows */
-.hour-row{display:contents}
-.hour-label{border-right:1px solid var(--gray-200);position:relative;height:80px}
-.hour-label span{position:absolute;top:-8px;right:10px;font-size:11px;font-weight:500;color:var(--gray-400);white-space:nowrap}
-.day-cell{position:relative;border-bottom:1px solid var(--gray-200);height:80px}
-.day-cell+.day-cell{border-left:1px solid var(--gray-100)}
-.day-cell .half{position:absolute;top:50%;left:0;right:0;border-top:1px dashed rgba(0,0,0,.06)}
+/* ===== GANTT LAYOUT ===== */
+.gantt-wrap{flex:1;overflow:hidden;display:flex;flex-direction:column;position:relative}
+.gantt-container{flex:1;display:flex;overflow:hidden}
+.coach-panel{width:var(--panel-w);min-width:var(--panel-w);flex-shrink:0;overflow-y:auto;border-right:1px solid var(--gray-200);background:#fff;z-index:10}
+.coach-panel::-webkit-scrollbar{display:none}
+.coach-panel{-ms-overflow-style:none;scrollbar-width:none}
+.timeline-wrap{flex:1;overflow:auto;position:relative}
+.timeline-wrap::-webkit-scrollbar{height:6px;width:6px}
+.timeline-wrap::-webkit-scrollbar-track{background:var(--gray-50)}
+.timeline-wrap::-webkit-scrollbar-thumb{background:var(--gray-300);border-radius:3px}
+.timeline-wrap::-webkit-scrollbar-thumb:hover{background:var(--gray-400)}
 
-/* Availability blocks */
-.ev{position:absolute;border-radius:5px;overflow:hidden;cursor:pointer;transition:box-shadow .15s,transform .1s;z-index:5;border:1px solid rgba(255,255,255,.35);padding:2px 5px;display:flex;flex-direction:column;justify-content:center}
-.ev:hover{box-shadow:0 4px 14px rgba(0,0,0,.22);transform:scale(1.02);z-index:15}
-.ev-name{font-size:10px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px rgba(0,0,0,.18);line-height:1.3}
-.ev-time{font-size:9px;font-weight:500;color:rgba(255,255,255,.82);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+/* Coach panel header */
+.cp-header{height:44px;display:flex;align-items:center;padding:0 16px;border-bottom:1px solid var(--gray-200);background:var(--gray-50);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--gray-400);position:sticky;top:0;z-index:5}
 
-/* Tooltip */
-.tt{position:fixed;z-index:500;background:var(--gray-900);color:#fff;padding:10px 14px;border-radius:var(--radius-sm);font-size:12px;pointer-events:none;opacity:0;transition:opacity .12s;max-width:260px;box-shadow:0 8px 28px rgba(0,0,0,.35);line-height:1.5}
-.tt.show{opacity:1}
-.tt-name{font-weight:700;font-size:13px}
-.tt-time{color:rgba(255,255,255,.65);margin:2px 0 4px}
-.tt-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;color:#fff}
+/* Coach row */
+.coach-row{height:var(--row-h);display:flex;align-items:center;padding:0 16px;gap:10px;border-bottom:1px solid var(--gray-100);transition:background .15s}
+.coach-row:nth-child(even){background:var(--gray-50)}
+.coach-row:hover{background:rgba(229,119,17,.03)}
+.coach-info{flex:1;min-width:0}
+.coach-name{font-size:13px;font-weight:600;color:var(--gray-800);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+.coach-meta{display:flex;align-items:center;gap:6px;margin-top:2px}
+.cat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.cat-label{font-size:10px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px}
+.slot-count{font-size:11px;font-weight:700;color:var(--gray-500);margin-left:auto;flex-shrink:0;background:var(--gray-100);padding:2px 8px;border-radius:10px;white-space:nowrap}
+
+/* Timeline header (hours) */
+.tl-header{height:44px;display:flex;align-items:flex-end;padding-bottom:8px;border-bottom:1px solid var(--gray-200);background:var(--gray-50);position:sticky;top:0;z-index:5;min-width:900px}
+.tl-hour{position:absolute;font-size:11px;font-weight:600;color:var(--gray-400);transform:translateX(-50%)}
+
+/* Timeline rows */
+.tl-body{position:relative;min-width:900px}
+.tl-row{height:var(--row-h);position:relative;border-bottom:1px solid var(--gray-100)}
+.tl-row:nth-child(even){background:var(--gray-50)}
+.tl-row:hover{background:rgba(229,119,17,.03)}
+
+/* Grid lines */
+.grid-line{position:absolute;top:0;bottom:0;width:1px;border-left:1px dashed var(--gray-200);z-index:1;pointer-events:none}
+
+/* Availability bars */
+.avail-bar{position:absolute;top:8px;height:calc(var(--row-h) - 16px);border-radius:8px;z-index:3;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid rgba(255,255,255,.25)}
+.avail-bar:hover{transform:scaleY(1.12);box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:10}
+.avail-bar .bar-text{font-size:10px;font-weight:700;color:rgba(255,255,255,.95);white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,.2);padding:0 6px;overflow:hidden;text-overflow:ellipsis}
 
 /* Now line */
-.now-indicator{position:absolute;left:0;right:0;z-index:12;pointer-events:none}
-.now-indicator::before{content:'';position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;background:#ef4444}
-.now-indicator::after{content:'';position:absolute;left:0;right:0;top:0;height:2px;background:#ef4444}
+.now-line{position:absolute;top:0;bottom:0;width:2px;background:#ef4444;z-index:8;pointer-events:none}
+.now-line::before{content:'';position:absolute;top:-4px;left:-4px;width:10px;height:10px;border-radius:50%;background:#ef4444}
+
+/* Tooltip */
+.tt{position:fixed;z-index:500;background:var(--gray-900);color:#fff;padding:12px 16px;border-radius:var(--radius);font-size:12px;pointer-events:none;opacity:0;transition:opacity .15s;max-width:280px;box-shadow:0 12px 40px rgba(0,0,0,.35);line-height:1.5;backdrop-filter:blur(8px)}
+.tt.show{opacity:1}
+.tt-name{font-weight:700;font-size:14px}
+.tt-time{color:rgba(255,255,255,.6);margin:3px 0 6px;font-size:12px}
+.tt-cat{display:inline-block;padding:3px 10px;border-radius:10px;font-size:10px;font-weight:700;color:#fff}
+.tt-slots{color:rgba(255,255,255,.5);font-size:11px;margin-top:6px}
 
 /* Footer */
 .footer{background:var(--gray-50);border-top:1px solid var(--gray-200);padding:20px;text-align:center;font-size:11px;color:var(--gray-400);flex-shrink:0}
@@ -94,18 +126,29 @@ body{font-family:'Inter',sans-serif;background:#fff;color:var(--gray-800);displa
 .denied h2{font-size:20px;color:var(--gray-800)}
 .denied p{color:var(--gray-500);font-size:14px}
 
+/* Empty state */
+.empty-state{display:flex;align-items:center;justify-content:center;padding:60px 20px;color:var(--gray-400);font-size:14px;font-weight:500}
+
 /* Responsive */
-@media(max-width:700px){
-  .cal-table{grid-template-columns:44px 1fr 1fr 1fr;min-width:420px}
-  .hour-label span{font-size:10px;right:4px}
-  .dh-num{font-size:20px}
-  .dh-num.is-today{width:30px;height:30px;font-size:15px}
-  .ev{padding:1px 3px}
-  .ev-name{font-size:9px}
-  .ev-time{font-size:8px}
-  .toolbar-inner{flex-direction:column;align-items:stretch}
-  .stats-bar{margin-left:0;text-align:center}
-  .coach-select{min-width:unset;width:100%}
+@media(max-width:768px){
+  :root{--panel-w:160px;--row-h:48px}
+  .header-inner{gap:10px}
+  .header-title{display:none}
+  .day-tab{padding:10px 12px}
+  .day-tab .dt-num{font-size:18px}
+  .stats-inner{gap:12px}
+  .stat-val{font-size:15px}
+  .stat-divider{display:none}
+  .filters-inner{flex-direction:column;align-items:stretch}
+  .search-box{width:100%}
+  .coach-name{font-size:12px}
+  .slot-count{font-size:10px;padding:1px 6px}
+  .tl-header,.tl-body{min-width:700px}
+}
+@media(max-width:480px){
+  :root{--panel-w:130px;--row-h:44px}
+  .coach-row{padding:0 8px;gap:6px}
+  .cat-label{display:none}
 }
 </style>
 </head>
@@ -121,6 +164,7 @@ body{font-family:'Inter',sans-serif;background:#fff;color:var(--gray-800);displa
 <!-- MAIN APP -->
 <div id="app" style="display:none;flex-direction:column;min-height:100vh">
 
+  <!-- HEADER -->
   <div class="header">
     <div class="header-inner">
       <a id="backBtn" class="back-btn" href="#">
@@ -128,22 +172,47 @@ body{font-family:'Inter',sans-serif;background:#fff;color:var(--gray-800);displa
         Indietro
       </a>
       <div class="logo"><span>W</span>UP</div>
-      <div class="header-title">Calendario Disponibilita Coach</div>
+      <div class="header-title">Calendario Disponibilit&agrave; Coach</div>
     </div>
   </div>
 
-  <div class="toolbar">
-    <div class="toolbar-inner">
-      <select id="coachSel" class="coach-select"><option value="all">Tutti i coach</option></select>
-      <span id="catBadge"></span>
-      <div id="stats" class="stats-bar"></div>
+  <!-- DAY TABS -->
+  <div class="day-tabs">
+    <div class="day-tabs-inner" id="dayTabs"></div>
+  </div>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stats-inner" id="statsBar"></div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters">
+    <div class="filters-inner">
+      <div class="search-wrap">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input type="text" id="searchBox" class="search-box" placeholder="Cerca coach...">
+      </div>
+      <select id="catFilter" class="cat-filter">
+        <option value="all">Tutte le categorie</option>
+        <option value="Trading">Trading</option>
+        <option value="Immobiliare">Immobiliare</option>
+        <option value="Business">Business</option>
+        <option value="Mindset">Mindset</option>
+        <option value="Mentor">Mentor</option>
+      </select>
     </div>
   </div>
 
-  <div class="cal-outer" id="calOuter">
-    <div class="cal-table" id="calTable"></div>
+  <!-- GANTT CHART -->
+  <div class="gantt-wrap">
+    <div class="gantt-container">
+      <div class="coach-panel" id="coachPanel"></div>
+      <div class="timeline-wrap" id="timelineWrap"></div>
+    </div>
   </div>
 
+  <!-- FOOTER -->
   <div class="footer">
     &copy; 2025 A Better Trading Group S.r.l. &mdash; P.IVA 12345678901 &mdash;
     <a href="#">Privacy Policy</a> &middot; <a href="#">Cookie Policy</a>
@@ -152,7 +221,12 @@ body{font-family:'Inter',sans-serif;background:#fff;color:var(--gray-800);displa
 </div>
 
 <!-- TOOLTIP -->
-<div class="tt" id="tt"><div class="tt-name"></div><div class="tt-time"></div><div class="tt-badge"></div></div>
+<div class="tt" id="tt">
+  <div class="tt-name"></div>
+  <div class="tt-time"></div>
+  <div class="tt-cat"></div>
+  <div class="tt-slots"></div>
+</div>
 
 <script>
 (function(){
@@ -274,40 +348,21 @@ var SLOTS=[
 ];
 
 var DAYS=[
-  {key:'fri',lbl:'ven',num:13},
-  {key:'sat',lbl:'sab',num:14},
-  {key:'sun',lbl:'dom',num:15}
+  {key:'fri',lbl:'VEN',num:13,full:'Venerd\u00ec'},
+  {key:'sat',lbl:'SAB',num:14,full:'Sabato'},
+  {key:'sun',lbl:'DOM',num:15,full:'Domenica'}
 ];
 
-var HOURS=[9,10,11,12,13,14,15,16,17];
-var H_PX=80;
 var CAT_COLORS={Trading:'#3b82f6',Immobiliare:'#22c55e',Business:'#8b5cf6',Mindset:'#ec4899',Mentor:'#13284C'};
-var CAT_CLS={Trading:'trading',Immobiliare:'immobiliare',Business:'business',Mindset:'mindset',Mentor:'mentor'};
+var TOTAL_MINUTES=540; /* 09:00 (540) to 18:00 (1080) */
+var START_MIN=540;
 
-/* Unique color per coach */
-var PALETTE=[
-  '#3b82f6','#22c55e','#8b5cf6','#ec4899','#f59e0b','#06b6d4',
-  '#ef4444','#10b981','#6366f1','#f97316','#14b8a6','#e11d48',
-  '#0ea5e9','#84cc16','#a855f7','#fb923c','#2dd4bf','#be185d',
-  '#7c3aed','#059669','#dc2626','#0891b2'
-];
-var cColorMap={};
-COACHES.forEach(function(c,i){cColorMap[c.id]=PALETTE[i];});
-
-/* Populate select */
-var sel=document.getElementById('coachSel');
-COACHES.forEach(function(c){
-  var o=document.createElement('option');
-  o.value=c.id;
-  o.textContent=c.name+' ('+c.cat+')';
-  sel.appendChild(o);
-});
+var activeDay='fri';
 
 /* ===== HELPERS ===== */
 function slotMins(i){var p=SLOTS[i].split(':');return +p[0]*60+ +p[1];}
-function minsPx(m){return((m-540)/60)*H_PX;} /* 540=9*60 */
 function fmt(m){var h=Math.floor(m/60),mn=m%60;return(h<10?'0':'')+h+':'+(mn<10?'0':'')+mn;}
-function initials(n){return n.split(' ').map(function(w){return w[0];}).join('').toUpperCase();}
+function pct(mins){return((mins-START_MIN)/TOTAL_MINUTES)*100;}
 
 function mergeSlots(arr){
   var out=[],i=0;
@@ -318,164 +373,233 @@ function mergeSlots(arr){
   return out;
 }
 
+function countSlots(arr){var c=0;for(var i=0;i<arr.length;i++)if(arr[i]===1)c++;return c;}
+
+function getInitials(name){
+  var parts=name.split(' ');
+  if(parts.length>=2)return(parts[0][0]+parts[parts.length-1][0]).toUpperCase();
+  return name.substring(0,2).toUpperCase();
+}
+
+/* ===== BUILD DAY TABS ===== */
+var tabsEl=document.getElementById('dayTabs');
+DAYS.forEach(function(d){
+  var tab=document.createElement('div');
+  tab.className='day-tab'+(d.key===activeDay?' active':'');
+  tab.dataset.day=d.key;
+  tab.innerHTML='<div class="dt-day">'+d.lbl+' '+d.num+' MAR</div><div class="dt-num">'+d.num+'</div>';
+  tab.addEventListener('click',function(){
+    activeDay=d.key;
+    tabsEl.querySelectorAll('.day-tab').forEach(function(t){t.classList.remove('active');});
+    tab.classList.add('active');
+    render();
+  });
+  tabsEl.appendChild(tab);
+});
+
 /* ===== RENDER ===== */
 function render(){
-  var v=sel.value, isAll=v==='all';
-  var list=isAll?COACHES:COACHES.filter(function(c){return c.id===v;});
-  var tbl=document.getElementById('calTable');
-  tbl.innerHTML='';
+  var searchVal=document.getElementById('searchBox').value.toLowerCase().trim();
+  var catVal=document.getElementById('catFilter').value;
 
-  /* Category badge */
-  var bEl=document.getElementById('catBadge');
-  if(!isAll&&list.length){
-    var cc=list[0];
-    bEl.innerHTML='<span class="cat-badge '+CAT_CLS[cc.cat]+'">'+cc.cat+'</span>';
-  } else bEl.innerHTML='';
+  /* Filter coaches */
+  var filtered=COACHES.filter(function(c){
+    if(searchVal&&c.name.toLowerCase().indexOf(searchVal)===-1)return false;
+    if(catVal!=='all'&&c.cat!==catVal)return false;
+    return true;
+  });
+
+  /* Compute slot counts for active day and sort */
+  var dayData=AVAIL[activeDay];
+  var coachData=filtered.map(function(c){
+    var av=dayData[c.id]||[];
+    var cnt=countSlots(av);
+    return{coach:c,avail:av,count:cnt};
+  });
+  coachData.sort(function(a,b){return b.count-a.count;});
 
   /* Stats */
-  var ts=0;
-  list.forEach(function(c){DAYS.forEach(function(d){
-    var a=AVAIL[d.key][c.id];if(a)a.forEach(function(v){ts+=v;});
-  });});
-  document.getElementById('stats').innerHTML='<strong>'+ts+'</strong> slot disponibili'+(isAll?' ('+list.length+' coach)':'');
+  var totalCoaches=coachData.length;
+  var totalSlots=0;
+  coachData.forEach(function(d){totalSlots+=d.count;});
+  var avgPct=totalCoaches>0?Math.round((totalSlots/(totalCoaches*27))*100):0;
 
-  /* Today check */
+  var statsEl=document.getElementById('statsBar');
+  statsEl.innerHTML=
+    '<div class="stat-item"><div><div class="stat-val">'+totalCoaches+'</div>Coach</div></div>'+
+    '<div class="stat-divider"></div>'+
+    '<div class="stat-item"><div><div class="stat-val">'+totalSlots+'</div>Slot disponibili</div></div>'+
+    '<div class="stat-divider"></div>'+
+    '<div class="stat-item"><div><div class="stat-val">'+avgPct+'%</div>Disponibilit\u00e0 media</div></div>';
+
+  /* Coach panel */
+  var panelEl=document.getElementById('coachPanel');
+  panelEl.innerHTML='<div class="cp-header">Coach</div>';
+
+  /* Timeline */
+  var tlWrap=document.getElementById('timelineWrap');
+  tlWrap.innerHTML='';
+
+  if(!coachData.length){
+    panelEl.innerHTML+='<div class="empty-state">Nessun coach trovato</div>';
+    tlWrap.innerHTML='<div class="empty-state">Nessun risultato</div>';
+    return;
+  }
+
+  /* Timeline header with hours */
+  var tlHeader=document.createElement('div');
+  tlHeader.className='tl-header';
+  tlHeader.style.position='sticky';
+  tlHeader.style.top='0';
+  tlHeader.style.zIndex='5';
+  for(var h=9;h<=18;h++){
+    var hEl=document.createElement('div');
+    hEl.className='tl-hour';
+    hEl.style.left=pct(h*60)+'%';
+    hEl.textContent=(h<10?'0':'')+h+':00';
+    tlHeader.appendChild(hEl);
+  }
+  tlWrap.appendChild(tlHeader);
+
+  /* Timeline body */
+  var tlBody=document.createElement('div');
+  tlBody.className='tl-body';
+  tlWrap.appendChild(tlBody);
+
+  /* Grid lines */
+  for(var h=9;h<=18;h++){
+    var gl=document.createElement('div');
+    gl.className='grid-line';
+    gl.style.left=pct(h*60)+'%';
+    tlBody.appendChild(gl);
+  }
+
+  /* Now line */
   var now=new Date();
-  var tDate=now.getDate(),tMonth=now.getMonth(); /* Mar=2 */
-
-  /* Day headers */
-  var corner=document.createElement('div');corner.className='dh-corner';tbl.appendChild(corner);
-  DAYS.forEach(function(d){
-    var el=document.createElement('div');el.className='dh';
-    var isT=(tMonth===2&&tDate===d.num);
-    el.innerHTML='<div class="dh-name'+(isT?' is-today':'')+'">'+d.lbl+'</div><div class="dh-num'+(isT?' is-today':'')+'">'+d.num+'</div>';
-    tbl.appendChild(el);
-  });
-
-  /* Hour rows */
-  HOURS.forEach(function(h){
-    var hl=document.createElement('div');hl.className='hour-label';
-    hl.innerHTML='<span>'+(h<10?'0':'')+h+':00</span>';
-    tbl.appendChild(hl);
-    DAYS.forEach(function(d){
-      var cell=document.createElement('div');cell.className='day-cell';
-      cell.dataset.day=d.key;cell.dataset.hour=h;
-      var half=document.createElement('div');half.className='half';
-      cell.appendChild(half);
-      tbl.appendChild(cell);
-    });
-  });
-
-  /* Place blocks per day */
-  DAYS.forEach(function(d){
-    var blocks=[];
-    list.forEach(function(coach){
-      var av=AVAIL[d.key][coach.id];if(!av)return;
-      mergeSlots(av).forEach(function(seg){
-        var sm=slotMins(seg[0]), em=slotMins(seg[1])+20;
-        blocks.push({coach:coach,sm:sm,em:em});
-      });
-    });
-    if(!blocks.length)return;
-
-    /* Layout columns for overlapping blocks (all mode) */
-    if(isAll){
-      blocks.sort(function(a,b){return a.sm-b.sm||a.coach.name.localeCompare(b.coach.name);});
-      var cols=[];
-      blocks.forEach(function(b){
-        var placed=false;
-        for(var c=0;c<cols.length;c++){
-          if(b.sm>=cols[c]){cols[c]=b.em;b.col=c;placed=true;break;}
-        }
-        if(!placed){b.col=cols.length;cols.push(b.em);}
-      });
-      var tc=cols.length;
-      blocks.forEach(function(b){b.tc=tc;});
+  var nowDay=DAYS.find(function(d){return d.num===now.getDate()&&now.getMonth()===2&&now.getFullYear()===2026;});
+  if(nowDay&&nowDay.key===activeDay){
+    var nowMins=now.getHours()*60+now.getMinutes();
+    if(nowMins>=START_MIN&&nowMins<=START_MIN+TOTAL_MINUTES){
+      var nl=document.createElement('div');
+      nl.className='now-line';
+      nl.style.left=pct(nowMins)+'%';
+      tlBody.appendChild(nl);
     }
+  }
 
-    /* Find first cell for this day (hour=9) */
-    var anchor=tbl.querySelector('.day-cell[data-day="'+d.key+'"][data-hour="9"]');
-    if(!anchor)return;
+  /* Rows */
+  coachData.forEach(function(cd){
+    var c=cd.coach;
+    var av=cd.avail;
+    var cnt=cd.count;
+    var color=CAT_COLORS[c.cat]||'#6b7280';
 
-    blocks.forEach(function(b){
-      var top=minsPx(b.sm);
-      var h=minsPx(b.em)-top;
-      if(h<6)h=6;
+    /* Coach panel row */
+    var row=document.createElement('div');
+    row.className='coach-row';
+    row.innerHTML=
+      '<div class="coach-info">'+
+        '<div class="coach-name">'+c.name+'</div>'+
+        '<div class="coach-meta">'+
+          '<div class="cat-dot" style="background:'+color+'"></div>'+
+          '<span class="cat-label">'+c.cat+'</span>'+
+        '</div>'+
+      '</div>'+
+      '<div class="slot-count">'+cnt+'/27</div>';
+    panelEl.appendChild(row);
 
-      var el=document.createElement('div');el.className='ev';
-      var color=isAll?cColorMap[b.coach.id]:CAT_COLORS[b.coach.cat]||'#6b7280';
-      el.style.background=color;
-      el.style.top=top+'px';
-      el.style.height=h+'px';
+    /* Timeline row */
+    var tlRow=document.createElement('div');
+    tlRow.className='tl-row';
+    tlBody.appendChild(tlRow);
 
-      if(isAll){
-        var cw=100/b.tc;
-        el.style.left=(b.col*cw)+'%';
-        el.style.width='calc('+cw+'% - 2px)';
-      } else {
-        el.style.left='2px';el.style.right='2px';
+    /* Availability bars */
+    var segs=mergeSlots(av);
+    segs.forEach(function(seg){
+      var startMin=slotMins(seg[0]);
+      var endMin=slotMins(seg[1])+20; /* each slot is 20min */
+      var leftPct=pct(startMin);
+      var widthPct=((endMin-startMin)/TOTAL_MINUTES)*100;
+
+      var bar=document.createElement('div');
+      bar.className='avail-bar';
+      bar.style.left=leftPct+'%';
+      bar.style.width=widthPct+'%';
+      bar.style.background='linear-gradient(135deg, '+color+' 0%, '+color+'cc 100%)';
+      bar.style.opacity='0.85';
+
+      /* Text inside bar */
+      var barWidth=(endMin-startMin);
+      var text=document.createElement('span');
+      text.className='bar-text';
+      if(barWidth>=80){
+        text.textContent=fmt(startMin)+' - '+fmt(endMin);
+      } else if(barWidth>=40){
+        text.textContent=getInitials(c.name);
       }
+      bar.appendChild(text);
 
-      var sStr=fmt(b.sm),eStr=fmt(b.em);
-      var dName=isAll?(b.coach.name.length>14?initials(b.coach.name):b.coach.name):b.coach.name;
-
-      if(h>28){
-        el.innerHTML='<div class="ev-name">'+dName+'</div><div class="ev-time">'+sStr+' - '+eStr+'</div>';
-      } else if(h>14){
-        el.innerHTML='<div class="ev-name">'+dName+'</div>';
-      }
-
-      el.addEventListener('mouseenter',function(e){ttShow(e,b.coach.name,sStr+' - '+eStr,b.coach.cat,color);});
-      el.addEventListener('mousemove',ttMove);
-      el.addEventListener('mouseleave',ttHide);
-
-      /* Touch support */
-      el.addEventListener('touchstart',function(e){
+      /* Tooltip events */
+      bar.addEventListener('mouseenter',function(e){
+        ttShow(e,c.name,fmt(startMin)+' - '+fmt(endMin),c.cat,color,cnt);
+      });
+      bar.addEventListener('mousemove',ttMove);
+      bar.addEventListener('mouseleave',ttHide);
+      bar.addEventListener('touchstart',function(e){
         e.preventDefault();
-        var t=e.touches[0];
-        ttShow(t,b.coach.name,sStr+' - '+eStr,b.coach.cat,color);
+        ttShow(e.touches[0],c.name,fmt(startMin)+' - '+fmt(endMin),c.cat,color,cnt);
       },{passive:false});
-      el.addEventListener('touchend',function(){setTimeout(ttHide,1500);});
+      bar.addEventListener('touchend',function(){setTimeout(ttHide,2000);});
 
-      anchor.appendChild(el);
+      tlRow.appendChild(bar);
     });
+  });
 
-    /* Now line */
-    var nowH=now.getHours(),nowM=now.getMinutes(),nowTot=nowH*60+nowM;
-    if(tMonth===2&&tDate===d.num&&nowTot>=540&&nowTot<=1080){
-      var nl=document.createElement('div');nl.className='now-indicator';
-      nl.style.top=minsPx(nowTot)+'px';
-      anchor.appendChild(nl);
-    }
+  /* Sync scroll between coach panel and timeline */
+  syncScroll();
+}
+
+/* ===== SCROLL SYNC ===== */
+function syncScroll(){
+  var panel=document.getElementById('coachPanel');
+  var tlWrap=document.getElementById('timelineWrap');
+
+  tlWrap.addEventListener('scroll',function(){
+    panel.scrollTop=tlWrap.scrollTop;
+  });
+  panel.addEventListener('scroll',function(){
+    tlWrap.scrollTop=panel.scrollTop;
   });
 }
 
 /* ===== TOOLTIP ===== */
 var ttEl=document.getElementById('tt');
-function ttShow(e,name,time,cat,color){
+function ttShow(e,name,time,cat,color,slots){
   ttEl.querySelector('.tt-name').textContent=name;
   ttEl.querySelector('.tt-time').textContent=time;
-  var badge=ttEl.querySelector('.tt-badge');badge.textContent=cat;badge.style.background=color;
+  var catEl=ttEl.querySelector('.tt-cat');
+  catEl.textContent=cat;
+  catEl.style.background=color;
+  ttEl.querySelector('.tt-slots').textContent=slots+'/27 slot disponibili';
   ttEl.classList.add('show');
   ttMove(e);
 }
 function ttMove(e){
   var cx=e.clientX||e.pageX,cy=e.clientY||e.pageY;
-  var x=cx+14,y=cy+14;
-  if(x+260>window.innerWidth)x=cx-270;
-  if(y+80>window.innerHeight)y=cy-90;
+  var x=cx+16,y=cy-60;
+  if(x+280>window.innerWidth)x=cx-290;
+  if(y<8)y=cy+20;
+  if(y+120>window.innerHeight)y=cy-130;
   ttEl.style.left=x+'px';ttEl.style.top=y+'px';
 }
 function ttHide(){ttEl.classList.remove('show');}
 
-/* ===== INIT ===== */
-sel.addEventListener('change',render);
-render();
+/* ===== EVENT LISTENERS ===== */
+document.getElementById('searchBox').addEventListener('input',render);
+document.getElementById('catFilter').addEventListener('change',render);
 
-/* Scroll to ~current hour area or 9:00 */
-var outer=document.getElementById('calOuter');
-var now2=new Date(),ch=now2.getHours();
-if(ch>=9&&ch<=17){outer.scrollTop=minsPx(ch*60);}
+/* ===== INIT ===== */
+render();
 
 })();
 </script>
