@@ -505,7 +505,7 @@ function render(){
           '<span class="cat-label">'+c.cat+'</span>'+
         '</div>'+
       '</div>'+
-      '<div class="slot-count">'+cnt+'/27</div>';
+      '<div class="slot-count">'+cnt+'/'+(activeDay==='sun'?21:30)+'</div>';
     panelEl.appendChild(row);
 
     /* Timeline row */
@@ -580,7 +580,7 @@ function ttShow(e,name,time,cat,color,slots){
   var catEl=ttEl.querySelector('.tt-cat');
   catEl.textContent=cat;
   catEl.style.background=color;
-  ttEl.querySelector('.tt-slots').textContent=slots+'/27 slot disponibili';
+  ttEl.querySelector('.tt-slots').textContent=slots+'/'+(activeDay==='sun'?21:30)+' slot disponibili';
   ttEl.classList.add('show');
   ttMove(e);
 }
