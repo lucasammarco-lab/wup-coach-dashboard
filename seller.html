@@ -84,6 +84,7 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
 .esito-select.venduto{border-color:var(--green);color:var(--green);background:#d1fae5}
 .esito-select.non_venduto{border-color:var(--red);color:var(--red);background:#fee2e2}
 .esito-select.in_trattativa{border-color:#f59e0b;color:#b45309;background:#fef3c7}
+.esito-select.non_presentato{border-color:#6b7280;color:#374151;background:#f3f4f6}
 .esito-saving{font-size:11px;color:var(--gray-400);font-style:italic}
 .sf-row{display:flex;align-items:center;gap:8px;margin-top:6px}
 .sf-label{font-size:11px;color:var(--gray-400);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
@@ -195,6 +196,7 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
         <option value="IN_TRATTATIVA">Opportunità aperta</option>
         <option value="VENDUTO">Chiusa vinta</option>
         <option value="NON_VENDUTO">Chiusa persa</option>
+        <option value="NON_PRESENTATO">Non presentato</option>
       </select>
       <button class="filter-clear" onclick="clearFilters()">Reset</button>
     </div>
@@ -415,13 +417,14 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
     var notes = b.notes ? '<div class="notes-text">' + escHtml(b.notes) + '</div>' : '';
 
     var esitoVal = (b.esito || '').toLowerCase();
-    var esitoClass = esitoVal === 'venduto' ? 'venduto' : esitoVal === 'non_venduto' ? 'non_venduto' : esitoVal === 'in_trattativa' ? 'in_trattativa' : '';
+    var esitoClass = esitoVal === 'venduto' ? 'venduto' : esitoVal === 'non_venduto' ? 'non_venduto' : esitoVal === 'in_trattativa' ? 'in_trattativa' : esitoVal === 'non_presentato' ? 'non_presentato' : '';
     var esitoRow = '<div class="esito-row"><span class="esito-label">Esito:</span>' +
       '<select class="esito-select ' + esitoClass + '" onchange="saveEsito(\'' + escId(b.booking_id) + '\',this)">' +
       '<option value="">-- da definire</option>' +
       '<option value="IN_TRATTATIVA"' + (b.esito==='IN_TRATTATIVA'?' selected':'') + '>Opportunità aperta</option>' +
       '<option value="VENDUTO"' + (b.esito==='VENDUTO'?' selected':'') + '>Chiusa vinta</option>' +
       '<option value="NON_VENDUTO"' + (b.esito==='NON_VENDUTO'?' selected':'') + '>Chiusa persa</option>' +
+      '<option value="NON_PRESENTATO"' + (b.esito==='NON_PRESENTATO'?' selected':'') + '>Non presentato</option>' +
       '</select><span class="esito-saving" id="esito-saving-' + escId(b.booking_id) + '"></span></div>';
 
     var sfChecked = (b.salesforce_opportunity || '').toUpperCase() === 'TRUE';
@@ -458,7 +461,7 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
     var esito = sel.value;
     var saving = document.getElementById('esito-saving-' + bookingId);
     if (saving) saving.textContent = 'salvataggio...';
-    sel.className = 'esito-select ' + (esito === 'VENDUTO' ? 'venduto' : esito === 'NON_VENDUTO' ? 'non_venduto' : esito === 'IN_TRATTATIVA' ? 'in_trattativa' : '');
+    sel.className = 'esito-select ' + (esito === 'VENDUTO' ? 'venduto' : esito === 'NON_VENDUTO' ? 'non_venduto' : esito === 'IN_TRATTATIVA' ? 'in_trattativa' : esito === 'NON_PRESENTATO' ? 'non_presentato' : '');
     try {
       var json = await apiPost({ action:'seller_update_esito', seller_id:sellerId, seller_token:sellerToken, booking_id:bookingId, esito:esito });
       if (saving) { saving.textContent = json.success ? 'salvato' : 'errore'; setTimeout(function(){ saving.textContent=''; }, 2000); }

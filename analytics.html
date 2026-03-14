@@ -192,6 +192,7 @@ tbody td{padding:12px 16px;font-size:13px;color:var(--gray-700)}
         <div class="kpi-card"><div class="kpi-label">Cancellati</div><div class="kpi-value red" id="kpi-cancelled">—</div><div class="kpi-sub" id="kpi-cancelled-sub"></div></div>
         <div class="kpi-card"><div class="kpi-label">Ore sessioni</div><div class="kpi-value blue" id="kpi-hours">—</div><div class="kpi-sub">@ 15 min/sessione</div></div>
         <div class="kpi-card"><div class="kpi-label">Coach attivi</div><div class="kpi-value purple" id="kpi-coaches">—</div><div class="kpi-sub">con almeno 1 prenotazione</div></div>
+        <div class="kpi-card"><div class="kpi-label">Non presentati</div><div class="kpi-value" id="kpi-noshow" style="color:var(--gray-700)">—</div><div class="kpi-sub" id="kpi-noshow-sub">no-show</div></div>
         <div class="kpi-card"><div class="kpi-label">Tasso cancellazione</div><div class="kpi-value" id="kpi-cancel-rate" style="color:var(--gray-700)">—</div><div class="kpi-sub">sul totale prenotazioni</div></div>
       </div>
 
@@ -228,7 +229,7 @@ tbody td{padding:12px 16px;font-size:13px;color:var(--gray-700)}
         <div class="chart-card">
           <div class="chart-title">Esiti commerciali</div>
           <div class="chart-sub">Quante sessioni hanno portato a una vendita</div>
-          <div id="conversion-kpis" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px"></div>
+          <div id="conversion-kpis" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px"></div>
           <div class="chart-wrap" style="max-height:200px;display:flex;align-items:center;justify-content:center"><canvas id="chart-conversion"></canvas></div>
         </div>
         <div class="chart-card">
@@ -287,6 +288,7 @@ tbody td{padding:12px 16px;font-size:13px;color:var(--gray-700)}
                 <th>Opportunità aperta</th>
                 <th>Chiusa vinta</th>
                 <th>Chiusa persa</th>
+                <th>Non presentato</th>
                 <th>In attesa</th>
               </tr>
             </thead>
@@ -407,6 +409,10 @@ tbody td{padding:12px 16px;font-size:13px;color:var(--gray-700)}
     setText('kpi-cancelled-sub', total > 0 ? Math.round(cancelled.length/total*100) + '% del totale' : '');
     setText('kpi-hours', hours + 'h');
     setText('kpi-coaches', coaches);
+    const noshow = confirmed.filter(function(b){ return b.esito === 'NON_PRESENTATO'; }).length;
+    setText('kpi-noshow', noshow);
+    setText('kpi-noshow-sub', confirmed.length > 0 ? Math.round(noshow/confirmed.length*100) + '% dei confermati' : 'no-show');
+    document.getElementById('kpi-noshow').style.color = noshow > 0 ? 'var(--gray-700)' : 'var(--green)';
     setText('kpi-cancel-rate', rate + '%');
     document.getElementById('kpi-cancel-rate').style.color = rate > 20 ? 'var(--red)' : rate > 10 ? 'var(--orange)' : 'var(--green)';
   }
@@ -665,6 +671,7 @@ tbody td{padding:12px 16px;font-size:13px;color:var(--gray-700)}
     const v  = confirmed.filter(function(b){ return b.esito === 'VENDUTO'; }).length;
     const nv = confirmed.filter(function(b){ return b.esito === 'NON_VENDUTO'; }).length;
     const it = confirmed.filter(function(b){ return b.esito === 'IN_TRATTATIVA'; }).length;
+    const np = confirmed.filter(function(b){ return b.esito === 'NON_PRESENTATO'; }).length;
     const dd = confirmed.filter(function(b){ return !b.esito; }).length;
     const defined = v + nv + it;
     const rate = defined > 0 ? Math.round(v / defined * 100) : 0;
@@ -673,18 +680,19 @@ tbody td{padding:12px 16px;font-size:13px;color:var(--gray-700)}
       kpiMini('🔄 Opportunità aperta', it, '#92400e', '#fef3c7') +
       kpiMini('✅ Chiusa vinta', v, '#065f46', '#d1fae5') +
       kpiMini('❌ Chiusa persa', nv, '#991b1b', '#fee2e2') +
-      kpiMini('📋 Da definire', dd, '#4b5563', '#f3f4f6');
+      kpiMini('🚫 Non presentato', np, '#374151', '#f3f4f6') +
+      kpiMini('📋 Da definire', dd, '#4b5563', '#e5e7eb');
 
     // Doughnut esiti
     destroyChart('chart-conversion');
-    if (defined > 0 || dd > 0) {
+    if (defined > 0 || dd > 0 || np > 0) {
       charts['chart-conversion'] = new Chart(document.getElementById('chart-conversion'), {
         type: 'doughnut',
         data: {
-          labels: ['Opportunità aperta','Chiusa vinta','Chiusa persa','Da definire'],
-          datasets: [{ data: [it, v, nv, dd],
-            backgroundColor: ['#f59e0bcc','#31B15Ccc','#e53e3ecc','#9ca3afcc'],
-            borderColor:     ['#f59e0b','#31B15C','#e53e3e','#9ca3af'],
+          labels: ['Opportunità aperta','Chiusa vinta','Chiusa persa','Non presentato','Da definire'],
+          datasets: [{ data: [it, v, nv, np, dd],
+            backgroundColor: ['#f59e0bcc','#31B15Ccc','#e53e3ecc','#6b7280cc','#9ca3afcc'],
+            borderColor:     ['#f59e0b','#31B15C','#e53e3e','#6b7280','#9ca3af'],
             borderWidth: 2, hoverOffset: 6 }]
         },
         options: { responsive:true, cutout:'65%',
@@ -698,13 +706,14 @@ tbody td{padding:12px 16px;font-size:13px;color:var(--gray-700)}
     // Bar coach conversion rate
     const coachData = {};
     confirmed.forEach(function(b){
-      if (!coachData[b.coach_name]) coachData[b.coach_name] = {v:0, nv:0, it:0};
-      if (b.esito === 'VENDUTO')       coachData[b.coach_name].v++;
-      if (b.esito === 'NON_VENDUTO')   coachData[b.coach_name].nv++;
-      if (b.esito === 'IN_TRATTATIVA') coachData[b.coach_name].it++;
+      if (!coachData[b.coach_name]) coachData[b.coach_name] = {v:0, nv:0, it:0, np:0};
+      if (b.esito === 'VENDUTO')        coachData[b.coach_name].v++;
+      if (b.esito === 'NON_VENDUTO')    coachData[b.coach_name].nv++;
+      if (b.esito === 'IN_TRATTATIVA')  coachData[b.coach_name].it++;
+      if (b.esito === 'NON_PRESENTATO') coachData[b.coach_name].np++;
     });
     const coachRates = Object.entries(coachData)
-      .map(function(e){ const tot = e[1].v+e[1].nv+e[1].it; return { name:e[0].split(' ').pop(), rate: tot>0?Math.round(e[1].v/tot*100):null }; })
+      .map(function(e){ const tot = e[1].v+e[1].nv+e[1].it; return { name:e[0].split(' ').pop(), rate: tot>0?Math.round(e[1].v/tot*100):null, np:e[1].np }; })
       .filter(function(e){ return e.rate !== null; })
       .sort(function(a,b){ return b.rate - a.rate; });
 
@@ -745,17 +754,18 @@ tbody td{padding:12px 16px;font-size:13px;color:var(--gray-700)}
     var sellerMap = {};
     confirmed.forEach(function(b) {
       var name = b.seller_name || '—';
-      if (!sellerMap[name]) sellerMap[name] = { total:0, it:0, v:0, nv:0, dd:0 };
+      if (!sellerMap[name]) sellerMap[name] = { total:0, it:0, v:0, nv:0, np:0, dd:0 };
       sellerMap[name].total++;
       if (b.esito === 'IN_TRATTATIVA') sellerMap[name].it++;
       else if (b.esito === 'VENDUTO') sellerMap[name].v++;
       else if (b.esito === 'NON_VENDUTO') sellerMap[name].nv++;
+      else if (b.esito === 'NON_PRESENTATO') sellerMap[name].np++;
       else sellerMap[name].dd++;
     });
     var rows = Object.entries(sellerMap).sort(function(a,b){ return b[1].total - a[1].total; });
     var tbody = document.getElementById('seller-tbody');
     if (!rows.length) {
-      tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Nessun dato disponibile</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" class="empty-state">Nessun dato disponibile</td></tr>';
       return;
     }
     tbody.innerHTML = rows.map(function(e, i) {
@@ -769,6 +779,7 @@ tbody td{padding:12px 16px;font-size:13px;color:var(--gray-700)}
         '<td class="num-cell" style="color:#b45309">' + d.it + '</td>' +
         '<td class="num-cell green">' + d.v + '</td>' +
         '<td class="num-cell red">' + d.nv + '</td>' +
+        '<td class="num-cell" style="color:var(--gray-700)">' + d.np + '</td>' +
         '<td class="num-cell" style="color:var(--gray-500)">' + d.dd + '</td>' +
         '</tr>';
     }).join('');
