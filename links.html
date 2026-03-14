@@ -195,6 +195,20 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
             </div>
           </div>
         </div>
+        <div class="link-card">
+          <div class="link-card-inner">
+            <div class="link-icon orange">🔒</div>
+            <div class="link-body">
+              <div class="link-name">Gestione Disponibilità Coach</div>
+              <div class="link-desc">Blocca/sblocca slot dei coach — solo Alessia</div>
+              <div class="link-url" id="availability-url-text"></div>
+            </div>
+            <div class="link-actions">
+              <button class="btn-copy" onclick="copyLink('availability-url')">Copia</button>
+              <a class="btn-open" id="availability-url" href="#" target="_blank">↗ Apri</a>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- PUBBLICI -->
@@ -291,10 +305,12 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
     const analyticsUrl = BASE_DASH + 'analytics.html?token=' + adminToken;
     const salesUrl = BASE_DASH + 'sales.html?token=' + adminToken;
     const calendarUrl = BASE_DASH + 'calendar.html?token=' + adminToken;
+    const availabilityUrl = BASE_DASH + 'availability.html?token=' + adminToken;
     setLink('admin-url', adminUrl);
     setLink('analytics-url', analyticsUrl);
     setLink('sales-url', salesUrl);
     setLink('calendar-url', calendarUrl);
+    setLink('availability-url', availabilityUrl);
 
     loadCoaches();
     loadSellers();

@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23E57711'/><text x='50' y='68' font-size='60' font-weight='bold' font-family='Arial' fill='white' text-anchor='middle'>W</text></svg>">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>WUP — Gestione Disponibilit&agrave;</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --orange:#E57711;--orange-dark:#c96510;--green:#31B15C;--green-dark:#279a4f;
+  --red:#e53e3e;--red-dark:#c53030;
+  --blue:#3b82f6;--blue-dark:#2563eb;
+  --gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-300:#d1d5db;
+  --gray-400:#9ca3af;--gray-500:#6b7280;--gray-600:#4b5563;--gray-700:#374151;
+  --gray-800:#1f2937;--gray-900:#111827;
+  --radius-sm:8px;--radius:12px;--radius-lg:16px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.08);
+  --shadow:0 4px 16px rgba(0,0,0,.10);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.14);
+}
+body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-800);min-height:100vh}
+
+/* Header */
+.header{background:linear-gradient(135deg,var(--orange) 0%,var(--orange-dark) 100%);padding:16px 20px;position:sticky;top:0;z-index:100;box-shadow:var(--shadow)}
+.header-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.logo{color:#fff;font-size:24px;font-weight:800;letter-spacing:2px}
+.logo-sub{color:rgba(255,255,255,.8);font-size:11px;letter-spacing:.5px;text-transform:uppercase}
+.header-title{color:#fff;font-size:15px;font-weight:600;margin-left:auto;opacity:.9}
+
+/* Filter bar */
+.filter-bar{background:#fff;border-bottom:1px solid var(--gray-200);padding:12px 20px;position:sticky;top:64px;z-index:90;box-shadow:var(--shadow-sm)}
+.filter-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.day-btn{padding:8px 16px;border:2px solid var(--gray-300);border-radius:var(--radius-sm);background:#fff;color:var(--gray-600);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit}
+.day-btn:hover{border-color:var(--orange);color:var(--orange)}
+.day-btn.active{background:var(--orange);border-color:var(--orange);color:#fff}
+.coach-select{padding:8px 12px;border:2px solid var(--gray-300);border-radius:var(--radius-sm);background:#fff;color:var(--gray-700);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;min-width:180px}
+.coach-select:focus{outline:none;border-color:var(--orange)}
+
+/* Bulk actions */
+.bulk-bar{max-width:900px;margin:12px auto 0;padding:0 20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.bulk-btn{padding:8px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:700;cursor:pointer;border:2px solid;font-family:inherit;transition:all .15s}
+.bulk-btn.block-all{background:#fff;border-color:var(--red);color:var(--red)}
+.bulk-btn.block-all:hover{background:var(--red);color:#fff}
+.bulk-btn.unblock-all{background:#fff;border-color:var(--green);color:var(--green)}
+.bulk-btn.unblock-all:hover{background:var(--green);color:#fff}
+.bulk-btn:disabled{opacity:.4;cursor:default;pointer-events:none}
+
+/* Stats strip */
+.stats-strip{max-width:900px;margin:12px auto 0;padding:0 20px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat-card{background:#fff;border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow-sm);text-align:center}
+.stat-value{font-size:28px;font-weight:800;color:var(--orange)}
+.stat-value.green{color:var(--green)}
+.stat-value.red{color:var(--red)}
+.stat-value.blue{color:var(--blue)}
+.stat-label{font-size:11px;color:var(--gray-500);margin-top:2px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+
+/* Coach name */
+.coach-banner{max-width:900px;margin:16px auto 0;padding:0 20px}
+.coach-banner-inner{display:flex;align-items:center;gap:12px}
+.coach-avatar-lg{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;background:var(--orange);flex-shrink:0}
+.coach-banner-name{font-size:20px;font-weight:800;color:var(--gray-900)}
+.coach-banner-role{font-size:12px;color:var(--gray-500);font-weight:500}
+
+/* Content */
+.content{max-width:900px;margin:12px auto 32px;padding:0 20px}
+.slots-count{font-size:13px;color:var(--gray-500);font-weight:500;margin-bottom:12px;padding:4px 0}
+
+/* Slot card */
+.slot-card{background:#fff;border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow-sm);margin-bottom:8px;border:1px solid var(--gray-200);display:flex;align-items:center;gap:14px;transition:all .2s;cursor:pointer;user-select:none}
+.slot-card:hover{box-shadow:var(--shadow);transform:translateY(-1px)}
+.slot-card.booked{cursor:default}
+.slot-card.booked:hover{box-shadow:var(--shadow-sm);transform:none}
+.slot-card.saving{opacity:.6;pointer-events:none}
+.slot-time{font-size:15px;font-weight:700;color:var(--gray-900);white-space:nowrap;min-width:120px}
+.slot-status{margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.status-pill{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap}
+.status-pill.available{background:#d1fae5;color:#065f46}
+.status-pill.blocked{background:#fee2e2;color:#991b1b}
+.status-pill.booked{background:#dbeafe;color:#1e40af}
+.slot-client{font-size:13px;color:var(--gray-600);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px}
+.slot-saved{font-size:11px;color:var(--green);font-weight:700;opacity:0;transition:opacity .3s}
+.slot-saved.show{opacity:1}
+.slot-tooltip{font-size:11px;color:var(--gray-400);font-style:italic;display:none}
+.slot-card.booked:hover .slot-tooltip{display:inline}
+
+/* Empty state */
+.empty{text-align:center;padding:48px 20px;color:var(--gray-400)}
+.empty-icon{font-size:40px;margin-bottom:12px}
+.empty-text{font-size:15px;font-weight:500}
+.empty-sub{font-size:13px;color:var(--gray-400);margin-top:4px}
+
+/* Loading */
+.loading{text-align:center;padding:48px 20px}
+.spinner{width:36px;height:36px;border:3px solid var(--gray-200);border-top-color:var(--orange);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:13px;color:var(--gray-500);font-weight:500}
+
+/* Alert */
+.alert{padding:14px 16px;border-radius:var(--radius);margin-bottom:16px;font-size:14px;font-weight:500}
+.alert.error{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+.alert.success{background:#d1fae5;color:#065f46;border:1px solid #6ee7b7}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity .2s}
+.modal-overlay.visible{opacity:1}
+.modal{background:#fff;border-radius:var(--radius-lg);max-width:420px;width:100%;box-shadow:var(--shadow-lg);overflow:hidden;transform:scale(.95);transition:transform .2s}
+.modal-overlay.visible .modal{transform:scale(1)}
+.modal-header{background:var(--gray-900);padding:16px 20px;color:#fff;font-size:16px;font-weight:700}
+.modal-body{padding:20px}
+.modal-detail{font-size:14px;color:var(--gray-700);margin-bottom:8px}
+.modal-detail strong{color:var(--gray-900)}
+.modal-warning{background:#fef3c7;border:1px solid #fbbf24;border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:#92400e;margin:12px 0}
+.modal-actions{display:flex;gap:10px;margin-top:16px}
+.modal-btn{flex:1;padding:12px;border-radius:var(--radius-sm);font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .15s}
+.modal-btn.confirm-block{background:var(--red);color:#fff}
+.modal-btn.confirm-block:hover{background:var(--red-dark)}
+.modal-btn.confirm-unblock{background:var(--green);color:#fff}
+.modal-btn.confirm-unblock:hover{background:var(--green-dark)}
+.modal-btn.confirm-abort{background:var(--gray-100);color:var(--gray-700)}
+.modal-btn.confirm-abort:hover{background:var(--gray-200)}
+.modal-btn:disabled{opacity:.5;cursor:default}
+
+/* Error screen */
+.error-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.error-card{background:#fff;border-radius:var(--radius-lg);padding:40px 32px;text-align:center;max-width:380px;box-shadow:var(--shadow-lg)}
+.error-card h2{color:var(--red);margin:12px 0 8px;font-size:20px}
+.error-card p{color:var(--gray-500);font-size:14px}
+
+/* Prompt state (select coach/day) */
+.prompt-state{text-align:center;padding:60px 20px}
+.prompt-icon{font-size:48px;margin-bottom:16px}
+.prompt-text{font-size:16px;font-weight:600;color:var(--gray-700)}
+.prompt-sub{font-size:13px;color:var(--gray-400);margin-top:6px}
+
+@media(max-width:600px){
+  .stats-strip{grid-template-columns:1fr 1fr 1fr}
+  .stat-value{font-size:22px}
+  .filter-inner{gap:8px}
+  .day-btn{padding:6px 12px;font-size:12px}
+  .coach-select{min-width:140px;font-size:12px}
+  .slot-card{flex-wrap:wrap;gap:8px}
+  .slot-time{min-width:auto;font-size:14px}
+  .slot-status{margin-left:0;width:100%;justify-content:flex-end}
+  .bulk-bar{gap:8px}
+  .bulk-btn{font-size:12px;padding:7px 14px}
+  .coach-banner-name{font-size:17px}
+  .slot-client{max-width:140px}
+}
+</style>
+</head>
+<body>
+
+<div id="error-screen" class="error-screen" style="display:none">
+  <div class="error-card">
+    <div style="font-size:48px">&#128274;</div>
+    <h2>Accesso negato</h2>
+    <p>Token non valido o mancante. Contatta l'amministratore.</p>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+
+  <header class="header">
+    <div class="header-inner">
+      <div>
+        <div class="logo">WUP</div>
+        <div class="logo-sub">Coach Booking Platform</div>
+      </div>
+      <div class="header-title">Gestione Disponibilit&agrave;</div>
+    </div>
+  </header>
+
+  <div class="filter-bar">
+    <div class="filter-inner">
+      <button class="day-btn" data-date="2026-03-13" onclick="setDay(this,'2026-03-13')">Ven 13 Mar</button>
+      <button class="day-btn" data-date="2026-03-14" onclick="setDay(this,'2026-03-14')">Sab 14 Mar</button>
+      <button class="day-btn" data-date="2026-03-15" onclick="setDay(this,'2026-03-15')">Dom 15 Mar</button>
+      <select class="coach-select" id="coach-select" onchange="setCoach(this.value)">
+        <option value="">Seleziona coach...</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="bulk-bar" id="bulk-bar" style="display:none">
+    <button class="bulk-btn block-all" id="btn-block-all" onclick="bulkAction('block')">&#128308; Blocca tutto il giorno</button>
+    <button class="bulk-btn unblock-all" id="btn-unblock-all" onclick="bulkAction('unblock')">&#128994; Sblocca tutto il giorno</button>
+  </div>
+
+  <div class="stats-strip" id="stats-strip" style="display:none">
+    <div class="stat-card"><div class="stat-value green" id="stat-available">-</div><div class="stat-label">Disponibili</div></div>
+    <div class="stat-card"><div class="stat-value red" id="stat-blocked">-</div><div class="stat-label">Bloccati</div></div>
+    <div class="stat-card"><div class="stat-value blue" id="stat-booked">-</div><div class="stat-label">Prenotati</div></div>
+  </div>
+
+  <div class="coach-banner" id="coach-banner" style="display:none">
+    <div class="coach-banner-inner">
+      <div class="coach-avatar-lg" id="coach-avatar">-</div>
+      <div>
+        <div class="coach-banner-name" id="coach-name-display">-</div>
+        <div class="coach-banner-role" id="coach-role-display">-</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div id="alert-area"></div>
+    <div id="slots-count" class="slots-count"></div>
+    <div id="slots-list">
+      <div class="prompt-state">
+        <div class="prompt-icon">&#128197;</div>
+        <div class="prompt-text">Seleziona un giorno e un coach</div>
+        <div class="prompt-sub">Usa i filtri qui sopra per visualizzare gli slot disponibili</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal conferma -->
+<div id="modal-overlay" class="modal-overlay" style="display:none" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header" id="modal-title">Conferma</div>
+    <div class="modal-body">
+      <div class="modal-detail"><strong>Coach:</strong> <span id="modal-coach"></span></div>
+      <div class="modal-detail"><strong>Orario:</strong> <span id="modal-time"></span></div>
+      <div class="modal-detail" id="modal-action-text"></div>
+      <div class="modal-warning" id="modal-warning"></div>
+      <div class="modal-actions">
+        <button class="modal-btn confirm-abort" onclick="closeModal()">Annulla</button>
+        <button class="modal-btn" id="modal-confirm-btn" onclick="confirmAction()">Conferma</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const API_URL = 'https://script.google.com/macros/s/AKfycbyRPpzCcN0h2kMyg6xKVMJroRZwQqYyxXtGmuaqtHh8BCVVQbHvT6DKjzJs0HrqFtyv/exec';
+  const EVENT_DAYS = ['2026-03-13', '2026-03-14', '2026-03-15'];
+  const AVATAR_COLORS = ['#E57711','#31B15C','#3b82f6','#8b5cf6','#ec4899','#f59e0b','#06b6d4','#10b981'];
+
+  let adminToken = '';
+  let coaches = [];
+  let currentDay = '';
+  let currentCoachId = '';
+  let currentCoachData = null;
+  let slots = [];
+  let pendingAction = null; // { type: 'block'|'unblock'|'bulk_block'|'bulk_unblock', slotIndex, slots }
+
+  // -- Init --
+  function init() {
+    const params = new URLSearchParams(window.location.search);
+    adminToken = params.get('token') || sessionStorage.getItem('wup_admin_token') || '';
+    if (!adminToken) { showErrorScreen(); return; }
+    sessionStorage.setItem('wup_admin_token', adminToken);
+    document.getElementById('app').style.display = 'block';
+
+    // Default to today if it's an event day
+    const today = new Date().toISOString().slice(0, 10);
+    const defaultDay = EVENT_DAYS.includes(today) ? today : EVENT_DAYS[0];
+    const dayBtns = document.querySelectorAll('.day-btn');
+    dayBtns.forEach(function(btn) {
+      if (btn.dataset.date === defaultDay) {
+        btn.classList.add('active');
+        currentDay = defaultDay;
+      }
+    });
+
+    loadCoaches();
+  }
+
+  function showErrorScreen() {
+    document.getElementById('error-screen').style.display = 'flex';
+  }
+
+  // -- API: Load coaches --
+  async function loadCoaches() {
+    try {
+      const url = API_URL + '?action=listCoaches';
+      const res = await fetch(url);
+      const json = await res.json();
+      if (json.success && json.data && json.data.coaches) {
+        coaches = json.data.coaches;
+        populateCoachDropdown();
+      }
+    } catch (e) {
+      showAlert('Errore nel caricamento dei coach: ' + e.message, 'error');
+    }
+  }
+
+  function populateCoachDropdown() {
+    var sel = document.getElementById('coach-select');
+    sel.innerHTML = '<option value="">Seleziona coach...</option>';
+    coaches.forEach(function(c) {
+      var opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = c.nome + ' ' + c.cognome + (c.ruolo ? ' (' + c.ruolo + ')' : '');
+      sel.appendChild(opt);
+    });
+  }
+
+  // -- Filters --
+  window.setDay = function(btn, date) {
+    document.querySelectorAll('.day-btn').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    currentDay = date;
+    if (currentCoachId) loadSlots();
+  };
+
+  window.setCoach = function(coachId) {
+    currentCoachId = coachId;
+    if (currentDay && currentCoachId) loadSlots();
+    else {
+      hideSlotUI();
+    }
+  };
+
+  function hideSlotUI() {
+    document.getElementById('stats-strip').style.display = 'none';
+    document.getElementById('bulk-bar').style.display = 'none';
+    document.getElementById('coach-banner').style.display = 'none';
+    document.getElementById('slots-count').textContent = '';
+    document.getElementById('slots-list').innerHTML =
+      '<div class="prompt-state">' +
+        '<div class="prompt-icon">&#128197;</div>' +
+        '<div class="prompt-text">Seleziona un giorno e un coach</div>' +
+        '<div class="prompt-sub">Usa i filtri qui sopra per visualizzare gli slot disponibili</div>' +
+      '</div>';
+  }
+
+  // -- API: Load slots --
+  async function loadSlots() {
+    showLoading();
+    try {
+      var url = API_URL + '?action=getCoachSlots&admin_token=' + encodeURIComponent(adminToken) +
+        '&coach_id=' + encodeURIComponent(currentCoachId) + '&date=' + encodeURIComponent(currentDay);
+      var res = await fetch(url);
+      var json = await res.json();
+      if (!json.success) {
+        if (json.code === 'UNAUTHORIZED') { showErrorScreen(); return; }
+        showAlert('Errore: ' + (json.error || 'Risposta non valida'), 'error');
+        return;
+      }
+      slots = json.data.slots || [];
+      currentCoachData = json.data.coach || null;
+      renderAll();
+    } catch (e) {
+      showAlert('Errore di rete: ' + e.message, 'error');
+      document.getElementById('slots-list').innerHTML =
+        '<div class="empty"><div class="empty-icon">&#9888;&#65039;</div><div class="empty-text">Errore nel caricamento</div></div>';
+    }
+  }
+
+  // -- Render --
+  function renderAll() {
+    renderCoachBanner();
+    renderStats();
+    renderBulkBar();
+    renderSlots();
+  }
+
+  function renderCoachBanner() {
+    var banner = document.getElementById('coach-banner');
+    if (!currentCoachData) { banner.style.display = 'none'; return; }
+    banner.style.display = 'block';
+    var initials = (currentCoachData.nome || '').charAt(0) + (currentCoachData.cognome || '').charAt(0);
+    var colorIdx = Math.abs(hashStr(currentCoachData.id || '')) % AVATAR_COLORS.length;
+    document.getElementById('coach-avatar').textContent = initials.toUpperCase();
+    document.getElementById('coach-avatar').style.background = AVATAR_COLORS[colorIdx];
+    document.getElementById('coach-name-display').textContent = currentCoachData.nome + ' ' + currentCoachData.cognome;
+    document.getElementById('coach-role-display').textContent = currentCoachData.ruolo || 'Coach';
+  }
+
+  function renderStats() {
+    var strip = document.getElementById('stats-strip');
+    strip.style.display = 'grid';
+    var avail = 0, blocked = 0, booked = 0;
+    slots.forEach(function(s) {
+      if (s.status === 'available') avail++;
+      else if (s.status === 'blocked') blocked++;
+      else if (s.status === 'booked') booked++;
+    });
+    document.getElementById('stat-available').textContent = avail;
+    document.getElementById('stat-blocked').textContent = blocked;
+    document.getElementById('stat-booked').textContent = booked;
+  }
+
+  function renderBulkBar() {
+    var bar = document.getElementById('bulk-bar');
+    if (!slots.length) { bar.style.display = 'none'; return; }
+    bar.style.display = 'flex';
+    var hasAvail = slots.some(function(s) { return s.status === 'available'; });
+    var hasBlocked = slots.some(function(s) { return s.status === 'blocked'; });
+    document.getElementById('btn-block-all').disabled = !hasAvail;
+    document.getElementById('btn-unblock-all').disabled = !hasBlocked;
+  }
+
+  function renderSlots() {
+    var container = document.getElementById('slots-list');
+    var countEl = document.getElementById('slots-count');
+
+    if (!slots.length) {
+      container.innerHTML =
+        '<div class="empty"><div class="empty-icon">&#128197;</div>' +
+        '<div class="empty-text">Nessuno slot per questo giorno</div>' +
+        '<div class="empty-sub" style="font-size:13px;color:var(--gray-400);margin-top:4px">Prova a selezionare un altro giorno</div></div>';
+      countEl.textContent = '';
+      return;
+    }
+
+    var avail = 0, blocked = 0, booked = 0;
+    slots.forEach(function(s) {
+      if (s.status === 'available') avail++;
+      else if (s.status === 'blocked') blocked++;
+      else if (s.status === 'booked') booked++;
+    });
+    countEl.textContent = slots.length + ' slot: ' + avail + ' disponibili, ' + blocked + ' bloccati, ' + booked + ' prenotati';
+
+    var html = '';
+    slots.forEach(function(slot, i) {
+      var startTime = formatTime(slot.start);
+      var endTime = formatTime(slot.end);
+      var isBooked = slot.status === 'booked';
+      var statusClass = slot.status === 'available' ? 'available' : (slot.status === 'blocked' ? 'blocked' : 'booked');
+      var statusLabel = slot.status === 'available' ? 'Disponibile' : (slot.status === 'blocked' ? 'Bloccato' : 'Prenotato');
+      var statusIcon = slot.status === 'available' ? '&#128994;' : (slot.status === 'blocked' ? '&#128308;' : '&#128309;');
+
+      html += '<div class="slot-card' + (isBooked ? ' booked' : '') + '" data-index="' + i + '"' +
+        (!isBooked ? ' onclick="onSlotClick(' + i + ')"' : '') +
+        (isBooked ? ' title="Prenotazione confermata - non modificabile"' : '') + '>' +
+        '<div class="slot-time">' + startTime + ' &ndash; ' + endTime + '</div>' +
+        '<div class="slot-status">' +
+          (isBooked && slot.client_name ? '<span class="slot-client">' + escapeHtml(slot.client_name) + '</span>' : '') +
+          '<span class="status-pill ' + statusClass + '">' + statusIcon + ' ' + statusLabel + '</span>' +
+          (isBooked ? '<span class="slot-tooltip">Non modificabile</span>' : '') +
+          '<span class="slot-saved" id="saved-' + i + '"></span>' +
+        '</div>' +
+      '</div>';
+    });
+
+    container.innerHTML = html;
+  }
+
+  // -- Slot click --
+  window.onSlotClick = function(index) {
+    var slot = slots[index];
+    if (!slot || slot.status === 'booked') return;
+
+    var startTime = formatTime(slot.start);
+    var endTime = formatTime(slot.end);
+    var coachName = currentCoachData ? (currentCoachData.nome + ' ' + currentCoachData.cognome) : 'Coach';
+
+    if (slot.status === 'available') {
+      pendingAction = { type: 'block', slotIndex: index };
+      showModal(
+        'Conferma blocco',
+        coachName,
+        startTime + ' - ' + endTime,
+        'Vuoi <strong>bloccare</strong> questo slot?',
+        'Lo slot non sar\u00e0 pi\u00f9 prenotabile dai clienti.',
+        'Blocca slot',
+        'confirm-block'
+      );
+    } else if (slot.status === 'blocked') {
+      pendingAction = { type: 'unblock', slotIndex: index };
+      showModal(
+        'Conferma sblocco',
+        coachName,
+        startTime + ' - ' + endTime,
+        'Vuoi <strong>sbloccare</strong> questo slot?',
+        'Lo slot torner\u00e0 disponibile per le prenotazioni.',
+        'Sblocca slot',
+        'confirm-unblock'
+      );
+    }
+  };
+
+  // -- Bulk actions --
+  window.bulkAction = function(type) {
+    var coachName = currentCoachData ? (currentCoachData.nome + ' ' + currentCoachData.cognome) : 'Coach';
+    var dayLabel = formatDayLabel(currentDay);
+
+    if (type === 'block') {
+      var availSlots = [];
+      slots.forEach(function(s, i) { if (s.status === 'available') availSlots.push(i); });
+      if (!availSlots.length) return;
+      pendingAction = { type: 'bulk_block', slots: availSlots };
+      showModal(
+        'Blocca tutto il giorno',
+        coachName,
+        dayLabel,
+        'Vuoi <strong>bloccare tutti i ' + availSlots.length + ' slot disponibili</strong>?',
+        'Tutti gli slot disponibili verranno bloccati. Le prenotazioni esistenti non verranno toccate.',
+        'Blocca tutti (' + availSlots.length + ')',
+        'confirm-block'
+      );
+    } else {
+      var blockedSlots = [];
+      slots.forEach(function(s, i) { if (s.status === 'blocked') blockedSlots.push(i); });
+      if (!blockedSlots.length) return;
+      pendingAction = { type: 'bulk_unblock', slots: blockedSlots };
+      showModal(
+        'Sblocca tutto il giorno',
+        coachName,
+        dayLabel,
+        'Vuoi <strong>sbloccare tutti i ' + blockedSlots.length + ' slot bloccati</strong>?',
+        'Tutti gli slot bloccati torneranno disponibili per le prenotazioni.',
+        'Sblocca tutti (' + blockedSlots.length + ')',
+        'confirm-unblock'
+      );
+    }
+  };
+
+  // -- Modal --
+  function showModal(title, coach, time, actionText, warning, btnText, btnClass) {
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-coach').textContent = coach;
+    document.getElementById('modal-time').innerHTML = time;
+    document.getElementById('modal-action-text').innerHTML = actionText;
+    document.getElementById('modal-warning').textContent = warning;
+    var btn = document.getElementById('modal-confirm-btn');
+    btn.textContent = btnText;
+    btn.className = 'modal-btn ' + btnClass;
+    btn.disabled = false;
+    var overlay = document.getElementById('modal-overlay');
+    overlay.style.display = 'flex';
+    requestAnimationFrame(function() { overlay.classList.add('visible'); });
+  }
+
+  window.closeModal = function(e) {
+    if (e && e.target !== e.currentTarget) return;
+    var overlay = document.getElementById('modal-overlay');
+    overlay.classList.remove('visible');
+    setTimeout(function() { overlay.style.display = 'none'; }, 200);
+    pendingAction = null;
+  };
+
+  window.confirmAction = function() {
+    if (!pendingAction) return;
+    var btn = document.getElementById('modal-confirm-btn');
+    btn.disabled = true;
+    btn.textContent = 'Salvataggio...';
+
+    if (pendingAction.type === 'block') {
+      toggleSlot(pendingAction.slotIndex, true);
+    } else if (pendingAction.type === 'unblock') {
+      toggleSlot(pendingAction.slotIndex, false);
+    } else if (pendingAction.type === 'bulk_block') {
+      bulkToggle(pendingAction.slots, true);
+    } else if (pendingAction.type === 'bulk_unblock') {
+      bulkToggle(pendingAction.slots, false);
+    }
+  };
+
+  // -- API: Toggle slot --
+  async function toggleSlot(index, block) {
+    var slot = slots[index];
+    var card = document.querySelector('.slot-card[data-index="' + index + '"]');
+    if (card) card.classList.add('saving');
+
+    try {
+      var res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+          action: 'toggleSlotBlock',
+          admin_token: adminToken,
+          coach_id: currentCoachId,
+          slot_start: slot.start,
+          slot_end: slot.end,
+          block: block
+        })
+      });
+      var json = await res.json();
+      if (json.success) {
+        slot.status = block ? 'blocked' : 'available';
+        closeModalInstant();
+        renderAll();
+        showSavedFeedback(index);
+      } else {
+        showAlert('Errore: ' + (json.error || 'Operazione fallita'), 'error');
+        closeModalInstant();
+      }
+    } catch (e) {
+      showAlert('Errore di rete: ' + e.message, 'error');
+      closeModalInstant();
+    }
+    if (card) card.classList.remove('saving');
+  }
+
+  async function bulkToggle(indices, block) {
+    var errors = 0;
+    var total = indices.length;
+    var done = 0;
+
+    for (var i = 0; i < indices.length; i++) {
+      var idx = indices[i];
+      var slot = slots[idx];
+      try {
+        var res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({
+            action: 'toggleSlotBlock',
+            admin_token: adminToken,
+            coach_id: currentCoachId,
+            slot_start: slot.start,
+            slot_end: slot.end,
+            block: block
+          })
+        });
+        var json = await res.json();
+        if (json.success) {
+          slot.status = block ? 'blocked' : 'available';
+        } else {
+          errors++;
+        }
+      } catch (e) {
+        errors++;
+      }
+      done++;
+      var btn = document.getElementById('modal-confirm-btn');
+      if (btn) btn.textContent = 'Salvataggio... ' + done + '/' + total;
+    }
+
+    closeModalInstant();
+    renderAll();
+
+    if (errors > 0) {
+      showAlert(errors + ' slot non sono stati aggiornati. Ricarica e riprova.', 'error');
+    } else {
+      showAlert('Tutti i ' + total + ' slot sono stati aggiornati con successo.', 'success');
+    }
+  }
+
+  function showSavedFeedback(index) {
+    var el = document.getElementById('saved-' + index);
+    if (!el) return;
+    el.innerHTML = '&#10003; Salvato';
+    el.classList.add('show');
+    setTimeout(function() { el.classList.remove('show'); }, 2000);
+  }
+
+  function closeModalInstant() {
+    var overlay = document.getElementById('modal-overlay');
+    overlay.classList.remove('visible');
+    overlay.style.display = 'none';
+    pendingAction = null;
+  }
+
+  // -- UI helpers --
+  function showLoading() {
+    document.getElementById('slots-list').innerHTML =
+      '<div class="loading"><div class="spinner"></div><div class="loading-text">Caricamento slot...</div></div>';
+    document.getElementById('slots-count').textContent = '';
+    document.getElementById('stats-strip').style.display = 'none';
+    document.getElementById('bulk-bar').style.display = 'none';
+    document.getElementById('coach-banner').style.display = 'none';
+  }
+
+  function showAlert(msg, type) {
+    var area = document.getElementById('alert-area');
+    var div = document.createElement('div');
+    div.className = 'alert ' + type;
+    div.textContent = msg;
+    area.innerHTML = '';
+    area.appendChild(div);
+    setTimeout(function() { div.remove(); }, 5000);
+  }
+
+  function formatTime(isoStr) {
+    if (!isoStr) return '--:--';
+    var d = new Date(isoStr);
+    if (isNaN(d.getTime())) {
+      // Try parsing as HH:MM
+      if (/^\d{2}:\d{2}/.test(isoStr)) return isoStr.slice(0, 5);
+      return isoStr;
+    }
+    return d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', hour12: false });
+  }
+
+  function formatDayLabel(dateStr) {
+    var days = { '2026-03-13': 'Venerd\u00ec 13 Marzo', '2026-03-14': 'Sabato 14 Marzo', '2026-03-15': 'Domenica 15 Marzo' };
+    return days[dateStr] || dateStr;
+  }
+
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function hashStr(str) {
+    var hash = 0;
+    for (var i = 0; i < str.length; i++) {
+      hash = ((hash << 5) - hash) + str.charCodeAt(i);
+      hash |= 0;
+    }
+    return hash;
+  }
+
+  // -- Start --
+  init();
+})();
+</script>
+</body>
+</html>
